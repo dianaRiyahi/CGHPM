@@ -1,11 +1,8 @@
-import org.example.AnimalInfo;
-
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.category.DefaultCategoryDataset;
+import javax.swing.border.BevelBorder;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MainFrame extends JFrame {
 
@@ -17,7 +14,6 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         initComponents();
     }
-
     private void initComponents() {
         setTitle("Canadian Wildlife");
         setSize(1100, 800);
@@ -84,17 +80,50 @@ public class MainFrame extends JFrame {
     private JButton createStyledButton(String text) {
         return createStyledButton(text, new Color(9, 60, 119), Color.WHITE);
     }
-
     private JButton createStyledButton(String text, Color bg, Color fg) {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.BOLD, 14));
         button.setBackground(bg);
         button.setForeground(fg);
         button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        button.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+        button.setPreferredSize(new Dimension(150, 50));
+
+        // Fit text within the button by adjusting padding
+        button.setMargin(new Insets(10, 20, 10, 20)); // Adjusting the margins for better text fitting
+
+        // Make buttons less squarish (rounded corners)
+        button.setBorder(BorderFactory.createLineBorder(bg.darker(), 2));  // Adjust border color to match the button's color
+        button.setOpaque(true);  // Ensure button background is solid for rounded corners to show properly
+        button.setBackground(bg); // Set the background color again after setting border
+
+        // Add mouse listener for 3D effect
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(button.getBackground().darker());  // Darken on hover
+                button.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED)); // Lowered border on hover
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(bg);  // Revert to original color
+                button.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED)); // Raised border on exit
+            }
+
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                button.setBackground(button.getBackground().brighter());  // Lighten on click
+            }
+
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                button.setBackground(bg);  // Revert to original after release
+            }
+        });
+
         return button;
     }
-
     private void loginActionPerformed() {
         JTextField usernameField = new JTextField();
         JPasswordField passwordField = new JPasswordField();
@@ -112,22 +141,28 @@ public class MainFrame extends JFrame {
             if (username.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Both fields are required.", "Login Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                break; // Success
+                break; // Successful login
             }
         }
 
         statusPanel.removeAll();
         statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
 
-        statusPanel.add(new JLabel("Welcome, " + usernameField.getText() + "!"));
-        statusPanel.add(Box.createVerticalStrut(10));
+        // Create centered welcome label with extra spacing
+        JLabel welcomeLabel = new JLabel("Welcome, " + usernameField.getText() + "!");
+        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 15));
 
-        // Create buttons with updated colors
+        statusPanel.add(Box.createVerticalStrut(20));  // Space above welcome text
+        statusPanel.add(welcomeLabel);
+        statusPanel.add(Box.createVerticalStrut(20));  // Space below welcome text
+
+        // Create all buttons with consistent size and color
         JButton newsletterButton = createStyledButton("Subscribe to Newsletter", new Color(0, 153, 204), Color.WHITE);
         JButton articlesButton = createStyledButton("View Articles", new Color(255, 140, 0), Color.WHITE);
         JButton endangeredButton = createStyledButton("Endangered List", new Color(105, 215, 230), Color.WHITE);
         JButton huntableButton = createStyledButton("Not for Hunt", new Color(123, 207, 243), Color.WHITE);
-        JButton factsButton = createStyledButton("Some Facts", new Color(243, 105, 105, 255), Color.WHITE);
+        JButton factsButton = createStyledButton("Some Facts", new Color(243, 105, 105), Color.WHITE);
         JButton emergencyButton = createStyledButton("Emergency Contact", new Color(255, 87, 51), Color.WHITE);
         JButton resourcesButton = createStyledButton("Resources", new Color(129, 129, 135), Color.WHITE);
 
@@ -140,41 +175,44 @@ public class MainFrame extends JFrame {
         emergencyButton.addActionListener(e -> showEmergencyContacts());
         resourcesButton.addActionListener(e -> showResources());
 
-        // Add buttons in the correct order
-        statusPanel.add(newsletterButton);
-        statusPanel.add(Box.createVerticalStrut(10));
-        statusPanel.add(articlesButton);
-        statusPanel.add(Box.createVerticalStrut(10));
-        statusPanel.add(endangeredButton);
-        statusPanel.add(Box.createVerticalStrut(10));
-        statusPanel.add(huntableButton);
-        statusPanel.add(Box.createVerticalStrut(10));
-        statusPanel.add(factsButton);
-        statusPanel.add(Box.createVerticalStrut(10));
-        statusPanel.add(emergencyButton);
+        // Add buttons to the panel (except Resources)
+        JButton[] buttons = {
+                newsletterButton,
+                articlesButton,
+                endangeredButton,
+                huntableButton,
+                factsButton,
+                emergencyButton
+        };
 
-        // Add a flexible space to push "Resources" to the bottom
+        for (JButton button : buttons) {
+            button.setMaximumSize(new Dimension(210, 40));  // Uniform button size (width, height)
+            button.setAlignmentX(Component.CENTER_ALIGNMENT);
+            statusPanel.add(button);
+            statusPanel.add(Box.createVerticalStrut(10));  // Spacing between buttons
+        }
+
+        // Add flexible glue to push "Resources" to the bottom
         statusPanel.add(Box.createVerticalGlue());
+
+        // Add Resources button at the very bottom
+        resourcesButton.setMaximumSize(new Dimension(210, 40));
+        resourcesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         statusPanel.add(resourcesButton);
 
         statusPanel.revalidate();
         statusPanel.repaint();
-    }
-
-    private void showEndangeredAnimals() {
+    }    private void showEndangeredAnimals() {
         String[] endangeredAnimals = {"Whooping Crane", "Vancouver Island Marmot", "Burrowing Owl", "North Atlantic Right Whale"};
         JOptionPane.showMessageDialog(this, "⚠️ Top Threatened Species:\n" + String.join("\n", endangeredAnimals), "Top Threatened", JOptionPane.INFORMATION_MESSAGE);
     }
-
     private void showLegalHuntingList() {
         String[] legalAnimals = {"White-tailed Deer", "Moose", "Black Bear", "Canada Goose"};
         JOptionPane.showMessageDialog(this, "📜 Hunting Guide:\n" + String.join("\n", legalAnimals), "Hunting Guide", JOptionPane.INFORMATION_MESSAGE);
     }
-
     private void showEmergencyContacts() {
         JOptionPane.showMessageDialog(this, "🚨 Report Poaching:\n\n📞 Call: 1-800-ILLEGAL-WILDLIFE\n📧 Email: report@wildlifeprotection.ca", "Report Poaching", JOptionPane.WARNING_MESSAGE);
     }
-
     private void showAnimalFacts() {
         String[] facts = {
                 "The beaver is Canada's national animal.",
@@ -184,11 +222,9 @@ public class MainFrame extends JFrame {
         };
         JOptionPane.showMessageDialog(this, "🌎 Wild Facts:\n" + String.join("\n", facts), "Wild Facts", JOptionPane.INFORMATION_MESSAGE);
     }
-
-    private void showResources(){
+    private void showResources() {
 
     }
-
     private void subscribeToNewsletter() {
         while (true) {
             String email = JOptionPane.showInputDialog(this, "Enter your Gmail to subscribe:", "Newsletter Subscription", JOptionPane.PLAIN_MESSAGE);
@@ -203,14 +239,12 @@ public class MainFrame extends JFrame {
             }
         }
     }
-
     private void openArticlesPage() {
         JFrame articlesFrame = new JFrame("Articles");
         articlesFrame.setSize(600, 400);
         articlesFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         articlesFrame.setVisible(true);
     }
-
     private void loadMap() {
         ImageIcon mapIcon = new ImageIcon("src/main/resources/stuuu.png");
         Image scaledImage = mapIcon.getImage().getScaledInstance(mapPanel.getWidth(), mapPanel.getHeight(), Image.SCALE_SMOOTH);
@@ -257,7 +291,6 @@ public class MainFrame extends JFrame {
         layeredPane.revalidate();
         layeredPane.repaint();
     }
-
     private void addProvinceButton(String province, int x, int y) {
         ImageIcon provinceIcon = new ImageIcon("src/main/resources/flag.png");
         JButton provinceButton = new JButton(provinceIcon);
@@ -269,41 +302,29 @@ public class MainFrame extends JFrame {
         provinceButton.addActionListener(e -> {
             if (province.equals("Ontario")) {
                 showOntarioAnimals();
-            }
-            else if (province.equals("Nunavut")) {
+            } else if (province.equals("Nunavut")) {
                 showNunavutAnimals();
-            }
-            else if (province.equals("Quebec")) {
+            } else if (province.equals("Quebec")) {
                 showQuebecAnimals();
-            }
-            else if (province.equals("Nova Scotia")) {
+            } else if (province.equals("Nova Scotia")) {
                 showNovaScotiaAnimals();
-            }
-            else if (province.equals("Manitoba")) {
+            } else if (province.equals("Manitoba")) {
                 showManitobaAnimals();
-            }
-            else if (province.equals("Saskatchewan")) {
+            } else if (province.equals("Saskatchewan")) {
                 showSaskatchewanAnimals();
-            }
-            else if (province.equals("Alberta")) {
+            } else if (province.equals("Alberta")) {
                 showAlbertaAnimals();
-            }
-            else if (province.equals("British Columbia")) {
+            } else if (province.equals("British Columbia")) {
                 showBritishColumbiaAnimals();
-            }
-            else if (province.equals("Yukon")) {
+            } else if (province.equals("Yukon")) {
                 showYukonAnimals();
-            }
-            else if (province.equals("Northwest Territories")) {
+            } else if (province.equals("Northwest Territories")) {
                 showNorthwestTerritoriesAnimals();
-            }
-            else if (province.equals("New Brunswick")) {
+            } else if (province.equals("New Brunswick")) {
                 showNewBrunswickAnimals();
-            }
-            else if (province.equals("Newfoundland and Labrador")) {
+            } else if (province.equals("Newfoundland and Labrador")) {
                 showNewfoundlandandLabradorAnimals();
-            }
-            else if (province.equals("Prince Edward Island")) {
+            } else if (province.equals("Prince Edward Island")) {
                 showPrinceEdwardIslandAnimals();
             }
         });
@@ -312,6 +333,7 @@ public class MainFrame extends JFrame {
         layeredPane.revalidate();
         layeredPane.repaint();
     }
+
 
     private void showOntarioAnimals() {
         JFrame ontarioFrame = new JFrame("Top 5 Native Animals in Ontario");
@@ -365,15 +387,8 @@ public class MainFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(animalsPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove default border
         ontarioFrame.add(scrollPane, BorderLayout.CENTER);
-
-
-        // Add "Read More" Button
-        JButton readMoreButton = new JButton("Read More");
-        readMoreButton.setBackground(new Color(246, 185, 163));
-        readMoreButton.addActionListener(e -> openDetailedNunavutFrame());
-
         ontarioFrame.add(animalsPanel, BorderLayout.CENTER);
-        ontarioFrame.add(readMoreButton, BorderLayout.SOUTH);
+
 
         ontarioFrame.setVisible(true);
     }
@@ -428,15 +443,9 @@ public class MainFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(animalsPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove default border
         quebecFrame.add(scrollPane, BorderLayout.CENTER);
-
-
-        // Add "Read More" Button
-        JButton readMoreButton = new JButton("Read More");
-        readMoreButton.setBackground(new Color(163, 246, 224));
-        readMoreButton.addActionListener(e -> openDetailedNunavutFrame());
-
         quebecFrame.add(animalsPanel, BorderLayout.CENTER);
-        quebecFrame.add(readMoreButton, BorderLayout.SOUTH);
+
+
 
         quebecFrame.setVisible(true);
     }
@@ -491,19 +500,11 @@ public class MainFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(animalsPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove default border
         novascotiaFrame.add(scrollPane, BorderLayout.CENTER);
-
-
-        // Add "Read More" Button
-        JButton readMoreButton = new JButton("Read More");
-        readMoreButton.setBackground(new Color(246, 245, 163));
-        readMoreButton.addActionListener(e -> openDetailedNunavutFrame());
-
         novascotiaFrame.add(animalsPanel, BorderLayout.CENTER);
-        novascotiaFrame.add(readMoreButton, BorderLayout.SOUTH);
 
         novascotiaFrame.setVisible(true);
     }
-    private void showManitobaAnimals(){
+    private void showManitobaAnimals() {
         JFrame ManitobaFrame = new JFrame("Top 5 Native Animals in Manitoba");
         ManitobaFrame.setSize(800, 750);
         ManitobaFrame.setLayout(new BorderLayout());
@@ -553,20 +554,13 @@ public class MainFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(animalsPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove default border
         ManitobaFrame.add(scrollPane, BorderLayout.CENTER);
-
-
-        // Add "Read More" Button
-        JButton readMoreButton = new JButton("Read More");
-        readMoreButton.setBackground(new Color(237, 217, 180));
-        readMoreButton.addActionListener(e -> openDetailedNunavutFrame());
-
         ManitobaFrame.add(animalsPanel, BorderLayout.CENTER);
-        ManitobaFrame.add(readMoreButton, BorderLayout.SOUTH);
+
 
         ManitobaFrame.setVisible(true);
 
     }
-    private void showSaskatchewanAnimals(){
+    private void showSaskatchewanAnimals() {
         JFrame SaskatchewanFrame = new JFrame("Top 5 Native Animals in Saskatchewan");
         SaskatchewanFrame.setSize(800, 750);
         SaskatchewanFrame.setLayout(new BorderLayout());
@@ -616,20 +610,14 @@ public class MainFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(animalsPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove default border
         SaskatchewanFrame.add(scrollPane, BorderLayout.CENTER);
-
-
-        // Add "Read More" Button
-        JButton readMoreButton = new JButton("Read More");
-        readMoreButton.setBackground(new Color(188, 241, 203));
-        readMoreButton.addActionListener(e -> openDetailedNunavutFrame());
-
         SaskatchewanFrame.add(animalsPanel, BorderLayout.CENTER);
-        SaskatchewanFrame.add(readMoreButton, BorderLayout.SOUTH);
+
+
 
         SaskatchewanFrame.setVisible(true);
 
     }
-    private void showAlbertaAnimals(){
+    private void showAlbertaAnimals() {
         JFrame AlbertaFrame = new JFrame("Top 5 Native Animals in Alberta");
         AlbertaFrame.setSize(800, 750);
         AlbertaFrame.setLayout(new BorderLayout());
@@ -680,20 +668,14 @@ public class MainFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(animalsPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove default border
         AlbertaFrame.add(scrollPane, BorderLayout.CENTER);
-
-
-        // Add "Read More" Button
-        JButton readMoreButton = new JButton("Read More");
-        readMoreButton.setBackground(new Color(163, 246, 192));
-        readMoreButton.addActionListener(e -> openDetailedNunavutFrame());
-
         AlbertaFrame.add(animalsPanel, BorderLayout.CENTER);
-        AlbertaFrame.add(readMoreButton, BorderLayout.SOUTH);
+
+
 
         AlbertaFrame.setVisible(true);
 
     }
-    private void showBritishColumbiaAnimals(){
+    private void showBritishColumbiaAnimals() {
         JFrame BritishColumbiaFrame = new JFrame("Top 5 Native Animals in British Columbia");
         BritishColumbiaFrame.setSize(800, 750);
         BritishColumbiaFrame.setLayout(new BorderLayout());
@@ -745,20 +727,12 @@ public class MainFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(animalsPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove default border
         BritishColumbiaFrame.add(scrollPane, BorderLayout.CENTER);
-
-
-        // Add "Read More" Button
-        JButton readMoreButton = new JButton("Read More");
-        readMoreButton.setBackground(new Color(246, 163, 163));
-        readMoreButton.addActionListener(e -> openDetailedNunavutFrame());
-
         BritishColumbiaFrame.add(animalsPanel, BorderLayout.CENTER);
-        BritishColumbiaFrame.add(readMoreButton, BorderLayout.SOUTH);
 
         BritishColumbiaFrame.setVisible(true);
 
     }
-    private void showYukonAnimals(){
+    private void showYukonAnimals() {
         JFrame YukonFrame = new JFrame("Top 5 Native Animals in Nunavut");
         YukonFrame.setSize(800, 750);
         YukonFrame.setLayout(new BorderLayout());
@@ -810,19 +784,11 @@ public class MainFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(animalsPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove default border
         YukonFrame.add(scrollPane, BorderLayout.CENTER);
-
-
-        // Add "Read More" Button
-        JButton readMoreButton = new JButton("Read More");
-        readMoreButton.setBackground(new Color(163, 187, 246));
-        readMoreButton.addActionListener(e -> openDetailedNunavutFrame());
-
         YukonFrame.add(animalsPanel, BorderLayout.CENTER);
-        YukonFrame.add(readMoreButton, BorderLayout.SOUTH);
 
         YukonFrame.setVisible(true);
     }
-    private void showNorthwestTerritoriesAnimals(){
+    private void showNorthwestTerritoriesAnimals() {
         JFrame NorthwestTerritoriesFrame = new JFrame("Top 5 Native Animals in Northwest Territories");
         NorthwestTerritoriesFrame.setSize(800, 750);
         NorthwestTerritoriesFrame.setLayout(new BorderLayout());
@@ -872,19 +838,11 @@ public class MainFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(animalsPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove default border
         NorthwestTerritoriesFrame.add(scrollPane, BorderLayout.CENTER);
-
-
-        // Add "Read More" Button
-        JButton readMoreButton = new JButton("Read More");
-        readMoreButton.setBackground(new Color(182, 191, 248));
-        readMoreButton.addActionListener(e -> openDetailedNunavutFrame());
-
         NorthwestTerritoriesFrame.add(animalsPanel, BorderLayout.CENTER);
-        NorthwestTerritoriesFrame.add(readMoreButton, BorderLayout.SOUTH);
 
         NorthwestTerritoriesFrame.setVisible(true);
     }
-    private void showNewBrunswickAnimals(){
+    private void showNewBrunswickAnimals() {
         JFrame NreBrunswickFrame = new JFrame("Top 5 Native Animals in New Brunswick");
         NreBrunswickFrame.setSize(800, 750);
         NreBrunswickFrame.setLayout(new BorderLayout());
@@ -936,20 +894,12 @@ public class MainFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(animalsPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove default border
         NreBrunswickFrame.add(scrollPane, BorderLayout.CENTER);
-
-
-        // Add "Read More" Button
-        JButton readMoreButton = new JButton("Read More");
-        readMoreButton.setBackground(new Color(185, 225, 192));
-        readMoreButton.addActionListener(e -> openDetailedNunavutFrame());
-
         NreBrunswickFrame.add(animalsPanel, BorderLayout.CENTER);
-        NreBrunswickFrame.add(readMoreButton, BorderLayout.SOUTH);
 
         NreBrunswickFrame.setVisible(true);
 
     }
-    private void showPrinceEdwardIslandAnimals(){
+    private void showPrinceEdwardIslandAnimals() {
         JFrame NunavutFrame = new JFrame("Top 5 Native Animals in Prince Edward Island");
         NunavutFrame.setSize(800, 750);
         NunavutFrame.setLayout(new BorderLayout());
@@ -1001,19 +951,11 @@ public class MainFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(animalsPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove default border
         NunavutFrame.add(scrollPane, BorderLayout.CENTER);
-
-
-        // Add "Read More" Button
-        JButton readMoreButton = new JButton("Read More");
-        readMoreButton.setBackground(new Color(237, 232, 196));
-        readMoreButton.addActionListener(e -> openDetailedNunavutFrame());
-
         NunavutFrame.add(animalsPanel, BorderLayout.CENTER);
-        NunavutFrame.add(readMoreButton, BorderLayout.SOUTH);
 
         NunavutFrame.setVisible(true);
     }
-    private void showNewfoundlandandLabradorAnimals(){
+    private void showNewfoundlandandLabradorAnimals() {
         JFrame NewfoundlandFrame = new JFrame("Top 5 Native Animals in Newfoundland and Labrador");
         NewfoundlandFrame.setSize(800, 750);
         NewfoundlandFrame.setLayout(new BorderLayout());
@@ -1059,43 +1001,38 @@ public class MainFrame extends JFrame {
             animalPanel.add(imageLabel, BorderLayout.WEST);
             animalPanel.add(animalLabel, BorderLayout.CENTER);
 
+
             animalsPanel.add(animalPanel);
         }
 
         JScrollPane scrollPane = new JScrollPane(animalsPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove default border
         NewfoundlandFrame.add(scrollPane, BorderLayout.CENTER);
-
-
-        // Add "Read More" Button
-        JButton readMoreButton = new JButton("Read More");
-        readMoreButton.setBackground(new Color(163, 231, 246));
-        readMoreButton.addActionListener(e -> openDetailedNunavutFrame());
-
         NewfoundlandFrame.add(animalsPanel, BorderLayout.CENTER);
-        NewfoundlandFrame.add(readMoreButton, BorderLayout.SOUTH);
+
 
         NewfoundlandFrame.setVisible(true);
     }
-    private void showNunavutAnimals() {
-        JFrame NunavutFrame = new JFrame("Top 5 Native Animals in Nunavut");
-        NunavutFrame.setSize(800, 750);
-        NunavutFrame.setLayout(new BorderLayout());
 
-        // Soft blue background
+
+    public void showNunavutAnimals() {
+        JFrame nunavutFrame = new JFrame("Top 5 Native Animals in Nunavut");
+        nunavutFrame.setSize(800, 750);
+        nunavutFrame.setLayout(new BorderLayout());
+
         Color lightBlue = new Color(230, 230, 230);
-        NunavutFrame.getContentPane().setBackground(lightBlue);
 
         JPanel animalsPanel = new JPanel();
-        animalsPanel.setLayout(new GridLayout(5, 1, 10, 10)); // 10px spacing for a cleaner look
-        animalsPanel.setBackground(lightBlue);
+        animalsPanel.setLayout(new GridLayout(5, 1, 10, 10));
+        animalsPanel.setBackground(lightBlue);  // Set background color for the animals panel
 
-        String[] animals = {
-                "<html><b>Polar Bear</b><br>Known for its white fur and strong build, the polar bear is an iconic species of the Arctic. They are found primarily on the sea ice and are known for being skilled hunters, primarily preying on seals.</html>",
-                "<html><b>Caribou</b><br>A large herbivorous mammal, the caribou is well-adapted to the harsh Arctic conditions. They are often seen in large herds and play a key role in the local ecosystem.</html>",
-                "<html><b>Arctic Fox</b><br>The Arctic fox is a small mammal with a thick coat that changes color with the seasons, from white in winter to brown in summer. It survives the cold winters of Nunavut by hunting small mammals and scavenging.</html>",
-                "<html><b>Snowy Owl</b><br>The snowy owl is a large, white owl that is found in the tundra regions. It has excellent hunting skills, preying on lemmings and other small animals.</html>",
-                "<html><b>Beluga Whale</b><br>These small white whales are found in the Arctic and sub-Arctic waters. They are highly social creatures, often seen in pods, and are well adapted to the cold waters.</html>"
+        String[] animals = {"Polar Bear", "Caribou", "Arctic Fox", "Snowy Owl", "Beluga Whale"};
+        String[] descriptions = {
+                "Known for its white fur and strong build, the polar bear is an iconic species of the Arctic. They are found primarily on the sea ice and are known for being skilled hunters, primarily preying on seals.",
+                "A large herbivorous mammal, the caribou is well-adapted to the harsh Arctic conditions. They are often seen in large herds and play a key role in the local ecosystem.",
+                "The Arctic fox is a small mammal with a thick coat that changes color with the seasons, from white in winter to brown in summer. It survives the cold winters of Nunavut by hunting small mammals and scavenging.",
+                "The snowy owl is a large, white owl that is found in the tundra regions. It has excellent hunting skills, preying on lemmings and other small animals.",
+                "These small white whales are found in the Arctic and sub-Arctic waters. They are highly social creatures, often seen in pods, and are well adapted to the cold waters."
         };
 
         String[] animalImages = {
@@ -1108,177 +1045,298 @@ public class MainFrame extends JFrame {
 
         for (int i = 0; i < animals.length; i++) {
             JPanel animalPanel = new JPanel(new BorderLayout());
-            animalPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Padding
+            animalPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-            // Image Label
+            // Set the background color for each animal panel explicitly
+            animalPanel.setBackground(lightBlue);
+
             ImageIcon icon = new ImageIcon(animalImages[i]);
             JLabel imageLabel = new JLabel(icon);
-            imageLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 15)); // Space between image & text
+            imageLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 15));
 
-            // Name & Description Label
-            JLabel animalLabel = new JLabel(animals[i]);
+            JLabel animalLabel = new JLabel("<html><b>" + animals[i] + "</b><br>" + descriptions[i] + "</html>");
             animalLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 
-            // Add components
             animalPanel.add(imageLabel, BorderLayout.WEST);
             animalPanel.add(animalLabel, BorderLayout.CENTER);
+
+            final int index = i;
+            animalPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    NunavutAnimalDetails(animals[index], descriptions[index], animalImages[index]);
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    // Set the hover effect background color
+                    animalPanel.setBackground(new Color(186, 237, 235));
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    // Reset background color when mouse exits
+                    animalPanel.setBackground(lightBlue);
+                }
+            });
 
             animalsPanel.add(animalPanel);
         }
 
         JScrollPane scrollPane = new JScrollPane(animalsPanel);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove default border
-        NunavutFrame.add(scrollPane, BorderLayout.CENTER);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        nunavutFrame.add(scrollPane, BorderLayout.CENTER);
+        nunavutFrame.add(animalsPanel, BorderLayout.CENTER);
 
 
-        // Add "Read More" Button
-        JButton readMoreButton = new JButton("Read More");
-        readMoreButton.setBackground(new Color(163, 246, 236));
-        readMoreButton.addActionListener(e -> openDetailedNunavutFrame());
-
-        NunavutFrame.add(animalsPanel, BorderLayout.CENTER);
-        NunavutFrame.add(readMoreButton, BorderLayout.SOUTH);
-
-        NunavutFrame.setVisible(true);
+        nunavutFrame.setVisible(true);
     }
+    private void NunavutAnimalDetails(String name, String description, String thumbnailPath) {
+        JFrame detailsFrame = new JFrame(name + " - Detailed Information");
+        detailsFrame.setSize(1200, 750);  // Wider to fit gallery on the right
+        detailsFrame.setLayout(new BorderLayout());
 
-    // Table for Nunavut
-    private void openDetailedNunavutFrame() {
-        // Adjusted frame size for better visibility
-        JFrame detailedFrame = new JFrame("Detailed Information on Nunavut Wildlife");
-        detailedFrame.setSize(1200, 700);  // Make the frame larger
-        detailedFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        // Set the layout to BoxLayout for better vertical distribution
-        detailedFrame.setLayout(new BoxLayout(detailedFrame.getContentPane(), BoxLayout.Y_AXIS));
-
-        AnimalInfo polarBear = new AnimalInfo(
-                "Polar Bear", 350, 250, 25, 30,
-                "Historical Population: Estimated 5,000 in 1980",
-                "Current Population: Approx 26,000", 4.0
-        );
-
-        AnimalInfo caribou = new AnimalInfo(
-                "Caribou", 320, 250, 15, 18,
-                "Historical Population: 100,000 in 1980",
-                "Current Population: Approx 300,000", 5.0
-        );
-
-        AnimalInfo arcticFox = new AnimalInfo(
-                "Arctic Fox", 4.5, 3.5, 10, 12,
-                "Historical Population: Estimated 250,000 in 1980",
-                "Current Population: Approx 500,000", 6.0
-        );
-
-        AnimalInfo snowyOwl = new AnimalInfo(
-                "Snowy Owl", 2.5, 2.3, 10, 12,
-                "Historical Population: Estimated 20,000 in 1980",
-                "Current Population: Approx 28,000", 3.0
-        );
-
-        AnimalInfo belugaWhale = new AnimalInfo(
-                "Beluga Whale", 1500, 1350, 40, 50,
-                "Historical Population: Estimated 100,000 in 1980",
-                "Current Population: Approx 120,000", 2.5
-        );
-
-        // Table Headers
-        String[] columnNames = {
-                "Animal", "Mass (Male) kg", "Mass (Female) kg",
-                "Lifespan (Male) Years", "Lifespan (Female) Years",
-                "Historical Population", "Current Population", "Population Growth (%)"
-        };
-
-        Object[][] data = {
-                {polarBear.getName(), polarBear.getMassMale(), polarBear.getMassFemale(),
-                        polarBear.getLifespanMale(), polarBear.getLifespanFemale(),
-                        polarBear.getHistoricalPopulation(), polarBear.getCurrentPopulation(),
-                        polarBear.getPopulationGrowth()},
-                {caribou.getName(), caribou.getMassMale(), caribou.getMassFemale(),
-                        caribou.getLifespanMale(), caribou.getLifespanFemale(),
-                        caribou.getHistoricalPopulation(), caribou.getCurrentPopulation(),
-                        caribou.getPopulationGrowth()},
-                {arcticFox.getName(), arcticFox.getMassMale(), arcticFox.getMassFemale(),
-                        arcticFox.getLifespanMale(), arcticFox.getLifespanFemale(),
-                        arcticFox.getHistoricalPopulation(), arcticFox.getCurrentPopulation(),
-                        arcticFox.getPopulationGrowth()},
-                {snowyOwl.getName(), snowyOwl.getMassMale(), snowyOwl.getMassFemale(),
-                        snowyOwl.getLifespanMale(), snowyOwl.getLifespanFemale(),
-                        snowyOwl.getHistoricalPopulation(), snowyOwl.getCurrentPopulation(),
-                        snowyOwl.getPopulationGrowth()},
-                {belugaWhale.getName(), belugaWhale.getMassMale(), belugaWhale.getMassFemale(),
-                        belugaWhale.getLifespanMale(), belugaWhale.getLifespanFemale(),
-                        belugaWhale.getHistoricalPopulation(), belugaWhale.getCurrentPopulation(),
-                        belugaWhale.getPopulationGrowth()}
-        };
-
-        // Create JTable (same as before)
-        JTable animalTable = new JTable(data, columnNames);
-        animalTable.setFillsViewportHeight(true);
-        JScrollPane scrollPane = new JScrollPane(animalTable);
-
-        // Create Population Growth Chart (Updated chart size)
-        JFreeChart lineChart = populationGrowthChartNunavut();
-        ChartPanel chartPanel = new ChartPanel(lineChart);
-        chartPanel.setPreferredSize(new Dimension(1000, 500)); // Adjusted chart height to fit well
-
-        // Panel to hold both table and graph (use BoxLayout to stack them vertically)
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.add(scrollPane);  // Add the table
-        mainPanel.add(chartPanel);  // Add the chart
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // Add to Frame
-        detailedFrame.add(mainPanel, BorderLayout.CENTER);
-        detailedFrame.setVisible(true);
+        // Choose a special "main" image for each animal
+        String mainImagePath = switch (name) {
+            case "Polar Bear" -> "src/main/resources/Nunavut/bearmain.jpeg";
+            case "Caribou" -> "src/main/resources/Nunavut/cariboumain.jpg";
+            case "Arctic Fox" -> "src/main/resources/Nunavut/foxmain.jpg";
+            case "Snowy Owl" -> "src/main/resources/Nunavut/owlmain.jpg";
+            case "Beluga Whale" -> "src/main/resources/Nunavut/whalemain.png";
+            default -> thumbnailPath;  // Fallback to clicked image if no special one exists
+        };
+
+        // Main Image + Description Panel
+        JPanel topPanel = new JPanel(new BorderLayout(10, 10));
+
+        ImageIcon icon = new ImageIcon(mainImagePath);
+        Image scaledImage = icon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
+        JLabel mainImageLabel = new JLabel(new ImageIcon(scaledImage));
+        topPanel.add(mainImageLabel, BorderLayout.WEST);
+
+        JTextArea descArea = new JTextArea(description);
+        descArea.setLineWrap(true);
+        descArea.setWrapStyleWord(true);
+        descArea.setEditable(false);
+        descArea.setBackground(mainPanel.getBackground());
+        descArea.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        JScrollPane descScrollPane = new JScrollPane(descArea);
+        descScrollPane.setPreferredSize(new Dimension(400, 200));
+        topPanel.add(descScrollPane, BorderLayout.CENTER);
+
+        // Facts Section
+        String facts = NunavutAnimalFacts(name);
+        JTextArea factsArea = new JTextArea("\n" + facts);
+        factsArea.setLineWrap(true);
+        factsArea.setWrapStyleWord(true);
+        factsArea.setEditable(false);
+        factsArea.setBackground(mainPanel.getBackground());
+        factsArea.setFont(new Font("Arial", Font.PLAIN, 14));
+        JScrollPane factsScrollPane = new JScrollPane(factsArea);
+        factsScrollPane.setBorder(BorderFactory.createTitledBorder("Interesting Facts"));
+
+        // Population Graph
+        JPanel graphPanel = NunavutPopulationGraph(name);
+
+        // Right-Side Gallery Panel
+        JPanel galleryPanel = new JPanel();
+        galleryPanel.setLayout(new BoxLayout(galleryPanel, BoxLayout.Y_AXIS));
+        galleryPanel.setBorder(BorderFactory.createTitledBorder("Gallery"));
+        galleryPanel.setPreferredSize(new Dimension(250, 0));  // Fixed width
+
+        String[] additionalImages = switch (name) {
+            case "Polar Bear" -> new String[]{
+                    "src/main/resources/Nunavut/bear1.jpg",
+                    "src/main/resources/Nunavut/bear2.png",
+                    "src/main/resources/Nunavut/bear3.jpg",
+                    "src/main/resources/Nunavut/bear4.jpg"
+            };
+            case "Caribou" -> new String[]{
+                    "src/main/resources/Nunavut/caribou1.jpg",
+                    "src/main/resources/Nunavut/caribou2.jpg",
+                    "src/main/resources/Nunavut/caribou3.jpg",
+                    "src/main/resources/Nunavut/caribou4.jpg"
+            };
+            case "Arctic Fox" -> new String[]{
+                    "src/main/resources/Nunavut/fox1.jpg",
+                    "src/main/resources/Nunavut/fox2.jpg",
+                    "src/main/resources/Nunavut/fox3.jpg",
+                    "src/main/resources/Nunavut/fox4.jpg"
+            };
+            case "Snowy Owl" -> new String[]{
+                    "src/main/resources/Nunavut/owl1.jpg",
+                    "src/main/resources/Nunavut/owl2.jpg",
+                    "src/main/resources/Nunavut/owl3.jpg",
+                    "src/main/resources/Nunavut/owl4.jpg"
+            };
+            case "Beluga Whale" -> new String[]{
+                    "src/main/resources/Nunavut/whale1.jpg",
+                    "src/main/resources/Nunavut/whale2.jpeg",
+                    "src/main/resources/Nunavut/whale3.jpg",
+                    "src/main/resources/Nunavut/whale4.jpg"
+            };
+            default -> new String[0];
+        };
+
+        // Add thumbnails to gallery
+        for (String imgPath : additionalImages) {
+            ImageIcon thumbIcon = new ImageIcon(imgPath);
+            Image thumbImage = thumbIcon.getImage().getScaledInstance(220, 147, Image.SCALE_SMOOTH);
+            JLabel thumbLabel = new JLabel(new ImageIcon(thumbImage));
+            thumbLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+            thumbLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            thumbLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+            thumbLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    NunavutFullImage(imgPath);
+                }
+            });
+
+            galleryPanel.add(Box.createVerticalStrut(10));
+            galleryPanel.add(thumbLabel);
+        }
+
+        // Layout Assembly
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(factsScrollPane, BorderLayout.CENTER);
+        mainPanel.add(graphPanel, BorderLayout.SOUTH);
+
+        JScrollPane mainScrollPane = new JScrollPane(mainPanel);
+
+        detailsFrame.add(mainScrollPane, BorderLayout.CENTER);
+        detailsFrame.add(galleryPanel, BorderLayout.EAST);
+
+        detailsFrame.setVisible(true);
     }
+    private void NunavutFullImage(String imgPath) {
+        JFrame imageFrame = new JFrame("Full Image");
+        imageFrame.setSize(600, 600);
+        JLabel imageLabel = new JLabel(new ImageIcon(new ImageIcon(imgPath).getImage().getScaledInstance(550, 550, Image.SCALE_SMOOTH)));
+        imageFrame.add(imageLabel);
+        imageFrame.setVisible(true);
+    }
+    private String NunavutAnimalFacts(String name) {
+        return switch (name) {
+            case "Polar Bear" -> """
+            • Scientific Name: Ursus maritimus
+            • Polar bears are excellent swimmers, covering long distances between ice sheets.
+            • Their fur appears white but is actually translucent.
+            • They rely heavily on sea ice to hunt seals.
+        """;
+            case "Caribou" -> """
+            • Scientific Name: Rangifer tarandus
+            • Caribou undertake one of the longest migrations of any land mammal.
+            • Both males and females grow antlers.
+            • They are critical to Inuit culture and subsistence.
+        """;
+            case "Arctic Fox" -> """
+            • Scientific Name: Vulpes lagopus
+            • Their fur changes from white in winter to brown in summer for camouflage.
+            • They can survive temperatures as low as -50°C.
+            • They often follow polar bears to scavenge leftover prey.
+        """;
+            case "Snowy Owl" -> """
+            • Scientific Name: Bubo scandiacus
+            • Unlike many owls, snowy owls are active during the day.
+            • They have excellent vision and hearing for hunting lemmings.
+            • Females are larger and have more black spots than males.
+        """;
+            case "Beluga Whale" -> """
+            • Scientific Name: Delphinapterus leucas
+            • Belugas are highly vocal and communicate with clicks and whistles.
+            • They can swim backwards!
+            • They shed their outer skin every summer.
+        """;
+            default -> "No facts available.";
+        };
+    }
+    private JPanel NunavutPopulationGraph(String animalName) {
+        int[] years = {1980, 1990, 2000, 2010, 2020, 2025};
 
-    //Graph for Nunavut
-    private JFreeChart populationGrowthChartNunavut() {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        int[] populationData = switch (animalName) {
+            case "Polar Bear" -> new int[]{26000, 25000, 24500, 23000, 22000, 21500};  // sample data
+            case "Caribou" -> new int[]{180000, 160000, 140000, 120000, 100000, 95000};
+            case "Arctic Fox" -> new int[]{100000, 95000, 90000, 85000, 80000, 78000};
+            case "Snowy Owl" -> new int[]{15000, 14500, 14000, 13000, 12500, 12000};
+            case "Beluga Whale" -> new int[]{90000, 88000, 86000, 84000, 82000, 81000};
+            default -> new int[]{0, 0, 0, 0, 0, 0};
+        };
 
-        // Population growth data (same as before)
-        dataset.addValue(5000, "Polar Bear", "1980");
-        dataset.addValue(12000, "Polar Bear", "1990");
-        dataset.addValue(18000, "Polar Bear", "2000");
-        dataset.addValue(26000, "Polar Bear", "2020");
+        JPanel graphPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
 
-        dataset.addValue(100000, "Caribou", "1980");
-        dataset.addValue(150000, "Caribou", "1990");
-        dataset.addValue(200000, "Caribou", "2000");
-        dataset.addValue(300000, "Caribou", "2020");
+                int width = getWidth();
+                int height = getHeight();
 
-        dataset.addValue(250000, "Arctic Fox", "1980");
-        dataset.addValue(320000, "Arctic Fox", "1990");
-        dataset.addValue(400000, "Arctic Fox", "2000");
-        dataset.addValue(500000, "Arctic Fox", "2020");
+                g2.setColor(Color.WHITE);
+                g2.fillRect(0, 0, width, height);
 
-        dataset.addValue(20000, "Snowy Owl", "1980");
-        dataset.addValue(22000, "Snowy Owl", "1990");
-        dataset.addValue(25000, "Snowy Owl", "2000");
-        dataset.addValue(28000, "Snowy Owl", "2020");
+                // Draw axes
+                g2.setColor(Color.BLACK);
+                g2.drawLine(50, height - 50, width - 50, height - 50); // X-axis
+                g2.drawLine(50, height - 50, 50, 50); // Y-axis
 
-        dataset.addValue(100000, "Beluga Whale", "1980");
-        dataset.addValue(110000, "Beluga Whale", "1990");
-        dataset.addValue(115000, "Beluga Whale", "2000");
-        dataset.addValue(120000, "Beluga Whale", "2020");
+                // Plot data points
+                int graphHeight = height - 100;
+                int graphWidth = width - 100;
+                int xStep = graphWidth / (years.length - 1);
 
-        // Create Line Chart
-        JFreeChart chart = ChartFactory.createLineChart(
-                "Nunavut Animal Population Growth", // Title
-                "Year", "Population", // X and Y axis labels
-                dataset
-        );
+                int maxPopulation = 0;
+                for (int pop : populationData) {
+                    if (pop > maxPopulation) maxPopulation = pop;
+                }
 
-        // Create ChartPanel with adjusted size (taller height)
-        ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(1000, 600));
+                int prevX = 50, prevY = height - 50 - (populationData[0] * graphHeight / maxPopulation);
 
-        return chart;
+                g2.setColor(Color.BLUE);
+                for (int i = 0; i < years.length; i++) {
+                    int x = 50 + (i * xStep);
+                    int y = height - 50 - (populationData[i] * graphHeight / maxPopulation);
+
+                    g2.fillOval(x - 3, y - 3, 6, 6);
+
+                    if (i > 0) {
+                        g2.drawLine(prevX, prevY, x, y);
+                    }
+
+                    prevX = x;
+                    prevY = y;
+
+                    // Add year labels
+                    g2.setColor(Color.BLACK);
+                    g2.drawString(String.valueOf(years[i]), x - 15, height - 30);
+                }
+
+                // Y-axis labels (population)
+                for (int i = 0; i <= 5; i++) {
+                    int yLabel = maxPopulation * i / 5;
+                    int yPos = height - 50 - (yLabel * graphHeight / maxPopulation);
+                    g2.drawString(yLabel + "", 10, yPos + 5);
+                }
+            }
+        };
+
+        graphPanel.setPreferredSize(new Dimension(600, 200));
+        graphPanel.setBorder(BorderFactory.createTitledBorder("Population Growth in Canada (1980-Present)"));
+
+        return graphPanel;
     }
 
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(MainFrame::new);
+        SwingUtilities.invokeLater(() -> {
+            MainFrame mainFrame = new MainFrame(); // Create an instance of MainFrame
+            mainFrame.setVisible(true); // Show the main frame
+        });
     }
 }
