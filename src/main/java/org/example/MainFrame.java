@@ -4,6 +4,10 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Main application frame for the Canadian Wildlife Information Portal.
+ * Displays a map, user status panel, and various buttons for interacting with the application.
+ */
 public class MainFrame extends JFrame {
 
     private JButton viewMapButton, loginButton, exitButton;
@@ -11,9 +15,15 @@ public class MainFrame extends JFrame {
     private JLabel mapLabel, titleLabel;
     private JLayeredPane layeredPane;
 
+    /**
+     * Constructs the main frame and initializes its components.
+     */
     public MainFrame() {
         initComponents();
     }
+    /**
+     * Initializes all components of the main frame.
+     */
     private void initComponents() {
         setTitle("Canadian Wildlife");
         setSize(1100, 800);
@@ -77,9 +87,21 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Creates a styled button with default colors.
+     * @param text The text to display on the button.
+     * @return A styled JButton.
+     */
     private JButton createStyledButton(String text) {
         return createStyledButton(text, new Color(9, 60, 119), Color.WHITE);
     }
+    /**
+     * Creates a styled button with specified colors.
+     * @param text The text to display on the button.
+     * @param bg Background color.
+     * @param fg Foreground (text) color.
+     * @return A styled JButton.
+     */
     private JButton createStyledButton(String text, Color bg, Color fg) {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.BOLD, 14));
@@ -124,6 +146,9 @@ public class MainFrame extends JFrame {
 
         return button;
     }
+    /**
+     * Displays a login dialog and updates the status panel upon successful login.
+     */
     private void loginActionPerformed() {
         JTextField usernameField = new JTextField();
         JPasswordField passwordField = new JPasswordField();
@@ -202,17 +227,30 @@ public class MainFrame extends JFrame {
 
         statusPanel.revalidate();
         statusPanel.repaint();
-    }    private void showEndangeredAnimals() {
+    }
+    /**
+     * Shows a dialog with endangered species information.
+     */
+    private void showEndangeredAnimals() {
         String[] endangeredAnimals = {"Whooping Crane", "Vancouver Island Marmot", "Burrowing Owl", "North Atlantic Right Whale"};
         JOptionPane.showMessageDialog(this, "⚠️ Top Threatened Species:\n" + String.join("\n", endangeredAnimals), "Top Threatened", JOptionPane.INFORMATION_MESSAGE);
     }
+    /**
+     * Shows a dialog with legal hunting species information.
+     */
     private void showLegalHuntingList() {
         String[] legalAnimals = {"White-tailed Deer", "Moose", "Black Bear", "Canada Goose"};
         JOptionPane.showMessageDialog(this, "📜 Hunting Guide:\n" + String.join("\n", legalAnimals), "Hunting Guide", JOptionPane.INFORMATION_MESSAGE);
     }
+    /**
+     * Shows emergency contact information.
+     */
     private void showEmergencyContacts() {
         JOptionPane.showMessageDialog(this, "🚨 Report Poaching:\n\n📞 Call: 1-800-ILLEGAL-WILDLIFE\n📧 Email: report@wildlifeprotection.ca", "Report Poaching", JOptionPane.WARNING_MESSAGE);
     }
+    /**
+     * Shows a dialog with animal facts.
+     */
     private void showAnimalFacts() {
         String[] facts = {
                 "The beaver is Canada's national animal.",
@@ -224,7 +262,9 @@ public class MainFrame extends JFrame {
     }
     private void showResources() {
 
-    }
+    }/**
+     * Shows a dialog to subscribe to the newsletter.
+     */
     private void subscribeToNewsletter() {
         while (true) {
             String email = JOptionPane.showInputDialog(this, "Enter your Gmail to subscribe:", "Newsletter Subscription", JOptionPane.PLAIN_MESSAGE);
@@ -239,12 +279,19 @@ public class MainFrame extends JFrame {
             }
         }
     }
+    /**
+     * Opens a new frame displaying articles.
+     */
     private void openArticlesPage() {
         JFrame articlesFrame = new JFrame("Articles");
         articlesFrame.setSize(600, 400);
         articlesFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         articlesFrame.setVisible(true);
     }
+
+    /**
+     * Loads the map image and displays province markers.
+     */
     private void loadMap() {
         ImageIcon mapIcon = new ImageIcon("src/main/resources/stuuu.png");
         Image scaledImage = mapIcon.getImage().getScaledInstance(mapPanel.getWidth(), mapPanel.getHeight(), Image.SCALE_SMOOTH);
@@ -291,6 +338,13 @@ public class MainFrame extends JFrame {
         layeredPane.revalidate();
         layeredPane.repaint();
     }
+
+    /**
+     * Adds a clickable button for a province on the map.
+     * @param province Name of the province.
+     * @param x X-coordinate of the button.
+     * @param y Y-coordinate of the button.
+     */
     private void addProvinceButton(String province, int x, int y) {
         ImageIcon provinceIcon = new ImageIcon("src/main/resources/flag.png");
         JButton provinceButton = new JButton(provinceIcon);
@@ -1014,7 +1068,11 @@ public class MainFrame extends JFrame {
         NewfoundlandFrame.setVisible(true);
     }
 
-
+    /**
+     * Displays a window showcasing the top 5 native animals in Nunavut.
+     * Each animal is shown with an image, a short description, and a hover effect.
+     * Clicking on an animal opens a detailed information window.
+     */
     public void showNunavutAnimals() {
         JFrame nunavutFrame = new JFrame("Top 5 Native Animals in Nunavut");
         nunavutFrame.setSize(800, 750);
@@ -1091,6 +1149,13 @@ public class MainFrame extends JFrame {
 
         nunavutFrame.setVisible(true);
     }
+    /**
+     * Opens a detailed information window for a selected Nunavut animal.
+     * The window includes a main image, description, interesting facts, population graph, and gallery images.
+     * @param name The name of the animal.
+     * @param description A brief description of the animal.
+     * @param thumbnailPath Path to the thumbnail image displayed in the list view.
+     */
     private void NunavutAnimalDetails(String name, String description, String thumbnailPath) {
         JFrame detailsFrame = new JFrame(name + " - Detailed Information");
         detailsFrame.setSize(1200, 750);  // Wider to fit gallery on the right
@@ -1215,6 +1280,10 @@ public class MainFrame extends JFrame {
 
         detailsFrame.setVisible(true);
     }
+    /**
+     * Opens a new window to display a full-sized image of the selected animal.
+     * @param imgPath The file path to the image to be displayed.
+     */
     private void NunavutFullImage(String imgPath) {
         JFrame imageFrame = new JFrame("Full Image");
         imageFrame.setSize(600, 600);
@@ -1222,6 +1291,11 @@ public class MainFrame extends JFrame {
         imageFrame.add(imageLabel);
         imageFrame.setVisible(true);
     }
+    /**
+     * Provides a set of interesting facts about a given Nunavut animal.
+     * @param name The name of the animal.
+     * @return A string containing facts about the specified animal.
+     */
     private String NunavutAnimalFacts(String name) {
         return switch (name) {
             case "Polar Bear" -> """
@@ -1257,6 +1331,12 @@ public class MainFrame extends JFrame {
             default -> "No facts available.";
         };
     }
+    /**
+     * Generates a JPanel containing a population graph for a given Nunavut animal.
+     * The graph displays population trends from 1980 to the present.
+     * @param animalName The name of the animal.
+     * @return JPanel containing the population graph.
+     */
     private JPanel NunavutPopulationGraph(String animalName) {
         int[] years = {1980, 1990, 2000, 2010, 2020, 2025};
 
