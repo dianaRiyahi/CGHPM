@@ -8,9 +8,9 @@ The following product allows you to see a map of Canada, and click on each provi
 2. Open the folder using preferred coding software and run the "MainFrame.java" file.
 3. Once the UI pops up, you are prompted to either make a login or continue as a guest user. 
 4. From there, you can enjoy all features:
-a.  Click on "Subscribe to Newsletter" to be updated on all animal related information
-b.  Click on "View Articles" to see any relevant articles on animals, species, endangerment, etc. 
-c.  Click on "Endangered List" to see a list of all animals residing in Canada that are currently endangered or at risk.
-d.  Click on "Not for Hunt" to see a list of all animals residing in Canada that have been legally protected by the Government.
-e.  Click on "Some facts" in order to see fun facts about animals.
-f.  Click on "Emergency Contact" if you have information you would like to report about the wildlife.
+   - Click on "Subscribe to Newsletter" to be updated on all animal related information
+   - Click on "View Articles" to see any relevant articles on animals, species, endangerment, etc.
+   -  Click on "Endangered List" to see a list of all animals residing in Canada that are currently endangered or at risk.
+   -  Click on "Not for Hunt" to see a list of all animals residing in Canada that have been legally protected by the Government.
+   -  Click on "Some facts" in order to see fun facts about animals.
+   -  Click on "Emergency Contact" if you have information you would like to report about the wildlife.
