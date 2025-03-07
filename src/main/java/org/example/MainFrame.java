@@ -18,7 +18,7 @@ public class MainFrame extends JFrame {
 
     private void initComponents() {
         setTitle("Canadian Wildlife");
-        setSize(1100, 800);
+        setSize(1100, 750);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         getContentPane().setBackground(Color.WHITE);
