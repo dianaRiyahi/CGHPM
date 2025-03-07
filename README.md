@@ -1,8 +1,8 @@
-#PROJECT INFORMATION
+# PROJECT INFORMATION
 
 The following product allows you to see a map of Canada, and click on each province in order to see the most popular native animals. Doing so provides access to information about each animal including their location, population, diet, status of conversation as well as any fun facts related. This is to keep track of wildlife populations and relevant information in order to aid in wildlife preservation and protection of natural resources.
 
-#PRODUCT INSTRUCTIONS
+# PRODUCT INSTRUCTIONS
 
 1. Clone the product into your own device using terminal command "git clone"
 2. Open the folder using preferred coding software and run the "MainFrame.java" file.
