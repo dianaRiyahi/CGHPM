@@ -1,29 +1,21 @@
-import javax.swing.border.BevelBorder;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-/**
- * Main application frame for the Canadian Wildlife Information Portal.
- * Displays a map, user status panel, and various buttons for interacting with the application.
- */
 public class MainFrame extends JFrame {
 
-    private JButton viewMapButton, loginButton, exitButton;
+    private JLabel titleLabel;
     private JPanel statusPanel, mapPanel;
-    private JLabel mapLabel, titleLabel;
+    private JButton viewMapButton, loginButton, signInButton;
     private JLayeredPane layeredPane;
+    private JLabel mapLabel;
+    private String savedUsername = null; // Store the username temporarily
 
-    /**
-     * Constructs the main frame and initializes its components.
-     */
     public MainFrame() {
         initComponents();
     }
-    /**
-     * Initializes all components of the main frame.
-     */
+
     private void initComponents() {
         setTitle("Canadian Wildlife");
         setSize(1100, 800);
@@ -34,41 +26,19 @@ public class MainFrame extends JFrame {
 
         // Title Label
         titleLabel = new JLabel("Wildlife Information Portal", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 26));
         titleLabel.setOpaque(true);
-        titleLabel.setBackground(new Color(9, 60, 119));
+        titleLabel.setBackground(new Color(32, 33, 34)); // Dark blue header
         titleLabel.setForeground(Color.WHITE);
-        titleLabel.setPreferredSize(new Dimension(getWidth(), 60));
-
-// Add this line for a 3D effect
-        titleLabel.setUI(new javax.swing.plaf.basic.BasicLabelUI());
-
+        titleLabel.setPreferredSize(new Dimension(getWidth(), 70));
         add(titleLabel, BorderLayout.NORTH);
 
-        // Buttons Panel
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        topPanel.setBackground(new Color(220, 220, 220));
-
-        viewMapButton = createStyledButton("View Map");
-        loginButton = createStyledButton("Login");
-        exitButton = createStyledButton("Exit", Color.RED, Color.WHITE);
-
-        exitButton.addActionListener(e -> System.exit(0));
-        viewMapButton.addActionListener(evt -> loadMap());
-        loginButton.addActionListener(evt -> loginActionPerformed());
-
-        topPanel.add(viewMapButton);
-        topPanel.add(loginButton);
-        topPanel.add(exitButton);
-        add(topPanel, BorderLayout.SOUTH);
-
-        // User Status Panel
+        // Sidebar (Sleek Dark Gray)
         statusPanel = new JPanel();
         statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
-        statusPanel.setBackground(Color.WHITE);
-        statusPanel.setBorder(BorderFactory.createTitledBorder("User Status"));
-        statusPanel.setPreferredSize(new Dimension(250, getHeight()));
-
+        statusPanel.setBackground(new Color(45, 45, 45)); // Modern Dark Gray
+        statusPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        statusPanel.setPreferredSize(new Dimension(220, getHeight()));
         add(statusPanel, BorderLayout.WEST);
 
         // Map Panel
@@ -76,224 +46,166 @@ public class MainFrame extends JFrame {
         mapLabel = new JLabel("", SwingConstants.CENTER);
         layeredPane = new JLayeredPane();
         layeredPane.setLayout(null);
-
         mapLabel.setBounds(0, 0, 800, 600);
         layeredPane.add(mapLabel, Integer.valueOf(0));
-
         mapPanel.add(layeredPane, BorderLayout.CENTER);
-        mapPanel.setBackground(Color.LIGHT_GRAY);
+        mapPanel.setBackground(Color.lightGray);
         add(mapPanel, BorderLayout.CENTER);
+
+        // Initially only "View Map" and "Log In" buttons
+        viewMapButton = createStyledButton("View Map");
+        loginButton = createStyledButton("Log In");
+
+        loginButton.addActionListener(evt -> loginActionPerformed());
+        viewMapButton.addActionListener(evt -> loadMap());
+
+        // Add buttons to sidebar
+        updateSidebarButtons(false);
 
         setVisible(true);
     }
 
-    /**
-     * Creates a styled button with default colors.
-     * @param text The text to display on the button.
-     * @return A styled JButton.
-     */
     private JButton createStyledButton(String text) {
-        return createStyledButton(text, new Color(9, 60, 119), Color.WHITE);
-    }
-    /**
-     * Creates a styled button with specified colors.
-     * @param text The text to display on the button.
-     * @param bg Background color.
-     * @param fg Foreground (text) color.
-     * @return A styled JButton.
-     */
-    private JButton createStyledButton(String text, Color bg, Color fg) {
         JButton button = new JButton(text);
-        button.setFont(new Font("Arial", Font.BOLD, 14));
-        button.setBackground(bg);
-        button.setForeground(fg);
+        button.setFont(new Font("Arial", Font.BOLD, 12));
+        button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-        button.setPreferredSize(new Dimension(150, 50));
+        button.setOpaque(false);  // No background
+        button.setContentAreaFilled(false);  // No background fill
+        button.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));  // Padding
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        // Fit text within the button by adjusting padding
-        button.setMargin(new Insets(10, 20, 10, 20)); // Adjusting the margins for better text fitting
-
-        // Make buttons less squarish (rounded corners)
-        button.setBorder(BorderFactory.createLineBorder(bg.darker(), 2));  // Adjust border color to match the button's color
-        button.setOpaque(true);  // Ensure button background is solid for rounded corners to show properly
-        button.setBackground(bg); // Set the background color again after setting border
-
-        // Add mouse listener for 3D effect
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
+        // Hover effect: light background to indicate clickable area
+        button.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(button.getBackground().darker());  // Darken on hover
-                button.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED)); // Lowered border on hover
+            public void mouseEntered(MouseEvent evt) {
+                button.setOpaque(true);
+                button.setBackground(new Color(60, 60, 60)); // Slightly lighter gray hover effect
             }
 
             @Override
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(bg);  // Revert to original color
-                button.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED)); // Raised border on exit
-            }
-
-            @Override
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                button.setBackground(button.getBackground().brighter());  // Lighten on click
-            }
-
-            @Override
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                button.setBackground(bg);  // Revert to original after release
+            public void mouseExited(MouseEvent evt) {
+                button.setOpaque(false);  // Return to invisible
+                button.setBackground(null);  // Remove background color
             }
         });
 
         return button;
     }
-    /**
-     * Displays a login dialog and updates the status panel upon successful login.
-     */
-    private void loginActionPerformed() {
-        JTextField usernameField = new JTextField();
-        JPasswordField passwordField = new JPasswordField();
 
-        Object[] message = {"Username:", usernameField, "Password:", passwordField};
+    private JButton createStyledButton(String text, Color bg, Color fg) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Arial", Font.BOLD, 12));
+        button.setBackground(bg);
+        button.setForeground(fg);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(12, 15, 12, 15));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        while (true) {
-            int option = JOptionPane.showConfirmDialog(this, message, "Login", JOptionPane.OK_CANCEL_OPTION);
-
-            if (option != JOptionPane.OK_OPTION) return; // Cancelled
-
-            String username = usernameField.getText().trim();
-            String password = new String(passwordField.getPassword()).trim();
-
-            if (username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Both fields are required.", "Login Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                break; // Successful login
+        // Button Hover Effects
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent evt) {
+                button.setBackground(bg.darker()); // Darken on hover
             }
-        }
 
+            @Override
+            public void mouseExited(MouseEvent evt) {
+                button.setBackground(bg); // Revert on exit
+            }
+        });
+
+        return button;
+    }
+
+    // Update Sidebar Buttons (Initial or After Login)
+    private void updateSidebarButtons(boolean loggedIn) {
         statusPanel.removeAll();
-        statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
 
-        // Create centered welcome label with extra spacing
-        JLabel welcomeLabel = new JLabel("Welcome, " + usernameField.getText() + "!");
-        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        int sidebarWidth = statusPanel.getPreferredSize().width; // Get sidebar width to apply to buttons
 
-        statusPanel.add(Box.createVerticalStrut(20));  // Space above welcome text
-        statusPanel.add(welcomeLabel);
-        statusPanel.add(Box.createVerticalStrut(20));  // Space below welcome text
+        if (loggedIn) {
+            String[] loggedInLabels = {
+                    "Subscribe to Newsletter",
+                    "View Articles",
+                    "Saved Endangered List",
+                    "Restricted Hunting",
+                    "Animal Facts",
+                    "Emergency Contact"
+            };
 
-        // Create all buttons with consistent size and color
-        JButton newsletterButton = createStyledButton("Subscribe to Newsletter", new Color(0, 153, 204), Color.WHITE);
-        JButton articlesButton = createStyledButton("View Articles", new Color(255, 140, 0), Color.WHITE);
-        JButton endangeredButton = createStyledButton("Endangered List", new Color(105, 215, 230), Color.WHITE);
-        JButton huntableButton = createStyledButton("Not for Hunt", new Color(123, 207, 243), Color.WHITE);
-        JButton factsButton = createStyledButton("Some Facts", new Color(243, 105, 105), Color.WHITE);
-        JButton emergencyButton = createStyledButton("Emergency Contact", new Color(255, 87, 51), Color.WHITE);
-        JButton resourcesButton = createStyledButton("Resources", new Color(129, 129, 135), Color.WHITE);
+            for (String label : loggedInLabels) {
+                JButton button = createStyledButton(label);
+                button.setMaximumSize(new Dimension(sidebarWidth, 40)); // Full width button
+                button.setAlignmentX(Component.LEFT_ALIGNMENT);
+                statusPanel.add(button);
+            }
 
-        // Add action listeners
-        newsletterButton.addActionListener(e -> subscribeToNewsletter());
-        articlesButton.addActionListener(e -> openArticlesPage());
-        endangeredButton.addActionListener(e -> showEndangeredAnimals());
-        huntableButton.addActionListener(e -> showLegalHuntingList());
-        factsButton.addActionListener(e -> showAnimalFacts());
-        emergencyButton.addActionListener(e -> showEmergencyContacts());
-        resourcesButton.addActionListener(e -> showResources());
+            // View Map button (always visible)
+            viewMapButton.setMaximumSize(new Dimension(sidebarWidth, 40)); // Full width
+            viewMapButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+            statusPanel.add(viewMapButton);
 
-        // Add buttons to the panel (except Resources)
-        JButton[] buttons = {
-                newsletterButton,
-                articlesButton,
-                endangeredButton,
-                huntableButton,
-                factsButton,
-                emergencyButton
-        };
+            // Log Out button (full width)
+            JButton logoutButton = createStyledButton("Log Out", new Color(45, 45, 45), Color.RED);
+            logoutButton.setMaximumSize(new Dimension(sidebarWidth, 40)); // Full width
+            logoutButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+            logoutButton.addActionListener(e -> updateSidebarButtons(false));
+            statusPanel.add(logoutButton);
 
-        for (JButton button : buttons) {
-            button.setMaximumSize(new Dimension(210, 40));  // Uniform button size (width, height)
-            button.setAlignmentX(Component.CENTER_ALIGNMENT);
-            statusPanel.add(button);
-            statusPanel.add(Box.createVerticalStrut(10));  // Spacing between buttons
+        } else {
+            // Login and Sign In buttons (full width)
+            loginButton.setMaximumSize(new Dimension(sidebarWidth, 40));
+            loginButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+            statusPanel.add(loginButton);
+
+            signInButton = createStyledButton("Sign In", new Color(45, 45, 45), Color.WHITE);
+            signInButton.setMaximumSize(new Dimension(sidebarWidth, 40));
+            signInButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+            signInButton.addActionListener(evt -> signInActionPerformed());
+            statusPanel.add(signInButton);
+
+            // View Map button (full width)
+            viewMapButton.setMaximumSize(new Dimension(sidebarWidth, 40));
+            viewMapButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+            statusPanel.add(viewMapButton);
         }
-
-        // Add flexible glue to push "Resources" to the bottom
-        statusPanel.add(Box.createVerticalGlue());
-
-        // Add Resources button at the very bottom
-        resourcesButton.setMaximumSize(new Dimension(210, 40));
-        resourcesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        statusPanel.add(resourcesButton);
 
         statusPanel.revalidate();
         statusPanel.repaint();
     }
-    /**
-     * Shows a dialog with endangered species information.
-     */
-    private void showEndangeredAnimals() {
-        String[] endangeredAnimals = {"Whooping Crane", "Vancouver Island Marmot", "Burrowing Owl", "North Atlantic Right Whale"};
-        JOptionPane.showMessageDialog(this, "⚠️ Top Threatened Species:\n" + String.join("\n", endangeredAnimals), "Top Threatened", JOptionPane.INFORMATION_MESSAGE);
-    }
-    /**
-     * Shows a dialog with legal hunting species information.
-     */
-    private void showLegalHuntingList() {
-        String[] legalAnimals = {"White-tailed Deer", "Moose", "Black Bear", "Canada Goose"};
-        JOptionPane.showMessageDialog(this, "📜 Hunting Guide:\n" + String.join("\n", legalAnimals), "Hunting Guide", JOptionPane.INFORMATION_MESSAGE);
-    }
-    /**
-     * Shows emergency contact information.
-     */
-    private void showEmergencyContacts() {
-        JOptionPane.showMessageDialog(this, "🚨 Report Poaching:\n\n📞 Call: 1-800-ILLEGAL-WILDLIFE\n📧 Email: report@wildlifeprotection.ca", "Report Poaching", JOptionPane.WARNING_MESSAGE);
-    }
-    /**
-     * Shows a dialog with animal facts.
-     */
-    private void showAnimalFacts() {
-        String[] facts = {
-                "The beaver is Canada's national animal.",
-                "Polar bears are considered marine mammals.",
-                "Canada has over 200 species of mammals.",
-                "The Canadian Lynx has huge paws for walking on snow."
-        };
-        JOptionPane.showMessageDialog(this, "🌎 Wild Facts:\n" + String.join("\n", facts), "Wild Facts", JOptionPane.INFORMATION_MESSAGE);
-    }
-    private void showResources() {
 
-    }/**
-     * Shows a dialog to subscribe to the newsletter.
-     */
-    private void subscribeToNewsletter() {
-        while (true) {
-            String email = JOptionPane.showInputDialog(this, "Enter your Gmail to subscribe:", "Newsletter Subscription", JOptionPane.PLAIN_MESSAGE);
+    // Sign In Functionality (Store the username temporarily)
+    private void signInActionPerformed() {
+        JTextField usernameField = new JTextField();
 
-            if (email == null) return; // Cancelled
+        Object[] message = {"Username:", usernameField};
 
-            if (!email.endsWith("@gmail.com")) {
-                JOptionPane.showMessageDialog(this, "Invalid email! Must end with @gmail.com.", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "Subscription successful! Newsletters will be sent to: " + email);
-                break;
-            }
+        int option = JOptionPane.showConfirmDialog(this, message, "Sign In", JOptionPane.OK_CANCEL_OPTION);
+
+        if (option == JOptionPane.OK_OPTION) {
+            savedUsername = usernameField.getText().trim();
+            JOptionPane.showMessageDialog(this, "Signed in as: " + savedUsername, "Sign In", JOptionPane.INFORMATION_MESSAGE);
         }
     }
-    /**
-     * Opens a new frame displaying articles.
-     */
-    private void openArticlesPage() {
-        JFrame articlesFrame = new JFrame("Articles");
-        articlesFrame.setSize(600, 400);
-        articlesFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        articlesFrame.setVisible(true);
+
+    // Login Functionality
+    private void loginActionPerformed() {
+        if (savedUsername == null || savedUsername.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "You must sign in first!", "Login Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Update Sidebar After Login
+        updateSidebarButtons(true);
     }
+
 
     /**
      * Loads the map image and displays province markers.
      */
     private void loadMap() {
-        ImageIcon mapIcon = new ImageIcon("src/main/resources/stuuu.png");
+        ImageIcon mapIcon = new ImageIcon("src/main/resources/cad.jpg");
         Image scaledImage = mapIcon.getImage().getScaledInstance(mapPanel.getWidth(), mapPanel.getHeight(), Image.SCALE_SMOOTH);
         mapLabel.setIcon(new ImageIcon(scaledImage));
 
@@ -302,28 +214,28 @@ public class MainFrame extends JFrame {
         mapLabel.setBounds(x, y, mapLabel.getIcon().getIconWidth(), mapLabel.getIcon().getIconHeight());
 
         // Add province buttons
-        addProvinceButton("Ontario", 420, 460);
-        addProvinceButton("Quebec", 550, 420);
-        addProvinceButton("Nova Scotia", 680, 470);
-        addProvinceButton("New Brunswick", 620, 480);
-        addProvinceButton("Manitoba", 370, 370);
-        addProvinceButton("Saskatchewan", 300, 380);
-        addProvinceButton("Alberta", 250, 350);
-        addProvinceButton("British Columbia", 180, 310);
-        addProvinceButton("Yukon", 190, 165);
-        addProvinceButton("Prince Edward Island", 650, 465);
-        addProvinceButton("Newfoundland and Labrador", 630, 360);
-        addProvinceButton("Northwest Territories", 250, 200);
-        addProvinceButton("Nunavut", 350, 250);
+        addProvinceButton("Ontario", 460, 435);
+        addProvinceButton("Quebec", 580, 360);
+        addProvinceButton("Nova Scotia", 715, 450);
+        addProvinceButton("New Brunswick", 690, 430);
+        addProvinceButton("Manitoba", 370, 390);
+        addProvinceButton("Saskatchewan", 300, 400);
+        addProvinceButton("Alberta", 240, 390);
+        addProvinceButton("British Columbia", 140, 370);
+        addProvinceButton("Yukon", 130, 220);
+        addProvinceButton("Prince Edward Island", 715, 410);
+        addProvinceButton("Newfoundland and Labrador", 660, 320);
+        addProvinceButton("Northwest Territories", 210, 250);
+        addProvinceButton("Nunavut", 365, 260);
 
         JLabel instructionLabel = new JLabel("<html><b>Click on the Green Flags to View Animals of That Province \uD83D\uDEA9.</b></html>");
         instructionLabel.setOpaque(true);
-        instructionLabel.setBackground(new Color(223, 246, 255)); // Light cool blue
-        instructionLabel.setForeground(new Color(0, 51, 102)); // Dark blue for readability
+        instructionLabel.setBackground(new Color(223, 255, 248)); // Light cool blue
+        instructionLabel.setForeground(new Color(16, 16, 16)); // Dark blue for readability
         instructionLabel.setFont(new Font("Arial", Font.BOLD, 14));
         instructionLabel.setHorizontalAlignment(SwingConstants.CENTER);
         instructionLabel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(0, 102, 204), 2), // Dark blue border
+                BorderFactory.createLineBorder(new Color(20, 21, 21), 2), // Dark blue border
                 BorderFactory.createEmptyBorder(5, 10, 5, 10) // Padding
         ));
 
@@ -338,7 +250,6 @@ public class MainFrame extends JFrame {
         layeredPane.revalidate();
         layeredPane.repaint();
     }
-
     /**
      * Adds a clickable button for a province on the map.
      * @param province Name of the province.
@@ -787,7 +698,7 @@ public class MainFrame extends JFrame {
 
     }
     private void showYukonAnimals() {
-        JFrame YukonFrame = new JFrame("Top 5 Native Animals in Nunavut");
+        JFrame YukonFrame = new JFrame("Top 5 Native Animals in Yukon");
         YukonFrame.setSize(800, 750);
         YukonFrame.setLayout(new BorderLayout());
 
