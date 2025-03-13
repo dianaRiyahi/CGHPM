@@ -351,7 +351,7 @@ public class MainFrame extends JFrame {
      * Loads the map image and displays province markers.
      */
     private void loadMap() {
-        ImageIcon mapIcon = new ImageIcon("src/main/resources/cad.jpg");
+        ImageIcon mapIcon = new ImageIcon("src/resources/cad.jpg");
         Image scaledImage = mapIcon.getImage().getScaledInstance(mapPanel.getWidth(), mapPanel.getHeight(), Image.SCALE_SMOOTH);
         mapLabel.setIcon(new ImageIcon(scaledImage));
 
@@ -403,7 +403,7 @@ public class MainFrame extends JFrame {
      * @param y Y-coordinate of the button.
      */
     private void addProvinceButton(String province, int x, int y) {
-        ImageIcon provinceIcon = new ImageIcon("src/main/resources/flag.png");
+        ImageIcon provinceIcon = new ImageIcon("src/resources/flag.png");
         JButton provinceButton = new JButton(provinceIcon);
         provinceButton.setBounds(x, y, provinceIcon.getIconWidth(), provinceIcon.getIconHeight());
         provinceButton.setBorderPainted(false);
@@ -468,11 +468,11 @@ public class MainFrame extends JFrame {
         };
 
         String[] animalImages = {
-                "src/main/resources/Ontario/moose.jpg",
-                "src/main/resources/Ontario/beaver.jpg",
-                "src/main/resources/Ontario/wolf.png",
-                "src/main/resources/Ontario/loon.jpg",
-                "src/main/resources/Ontario/turtle.jpg"
+                "src/resources/Ontario/moose.jpg",
+                "src/resources/Ontario/beaver.jpg",
+                "src/resources/Ontario/wolf.png",
+                "src/resources/Ontario/loon.jpg",
+                "src/resources/Ontario/turtle.jpg"
         };
 
         for (int i = 0; i < animals.length; i++) {
@@ -524,11 +524,11 @@ public class MainFrame extends JFrame {
         };
 
         String[] animalImages = {
-                "src/main/resources/Quebec/lynx.jpg",
-                "src/main/resources/Quebec/puffin.jpeg",
-                "src/main/resources/Quebec/bear.jpg",
-                "src/main/resources/Quebec/duck.jpg",
-                "src/main/resources/Quebec/skunk.jpg"
+                "src/resources/Quebec/lynx.jpg",
+                "src/resources/Quebec/puffin.jpeg",
+                "src/resources/Quebec/bear.jpg",
+                "src/resources/Quebec/duck.jpg",
+                "src/resources/Quebec/skunk.jpg"
         };
 
         for (int i = 0; i < animals.length; i++) {
@@ -581,11 +581,11 @@ public class MainFrame extends JFrame {
         };
 
         String[] animalImages = {
-                "src/main/resources/NovaScotia/deer.jpg",
-                "src/main/resources/NovaScotia/eagle.jpg",
-                "src/main/resources/NovaScotia/coyote.jpg",
-                "src/main/resources/NovaScotia/seal.jpeg",
-                "src/main/resources/NovaScotia/snowshoe.jpg"
+                "src/resources/NovaScotia/deer.jpg",
+                "src/resources/NovaScotia/eagle.jpg",
+                "src/resources/NovaScotia/coyote.jpg",
+                "src/resources/NovaScotia/seal.jpeg",
+                "src/resources/NovaScotia/snowshoe.jpg"
         };
 
         for (int i = 0; i < animals.length; i++) {
@@ -636,11 +636,11 @@ public class MainFrame extends JFrame {
         };
 
         String[] animalImages = {
-                "src/main/resources/Manitoba/bison.jpg",
-                "src/main/resources/Manitoba/wolf.jpeg",
-                "src/main/resources/Manitoba/wolverine.jpg",
-                "src/main/resources/Manitoba/fox.png",
-                "src/main/resources/Manitoba/owl.jpg"
+                "src/resources/Manitoba/bison.jpg",
+                "src/resources/Manitoba/wolf.jpeg",
+                "src/resources/Manitoba/wolverine.jpg",
+                "src/resources/Manitoba/fox.png",
+                "src/resources/Manitoba/owl.jpg"
         };
         for (int i = 0; i < animals.length; i++) {
             JPanel animalPanel = new JPanel(new BorderLayout());
@@ -692,11 +692,11 @@ public class MainFrame extends JFrame {
         };
 
         String[] animalImages = {
-                "src/main/resources/Saskatchewan/antelope.jpg",
-                "src/main/resources/Saskatchewan/badger.jpg",
-                "src/main/resources/Saskatchewan/grouse.jpg",
-                "src/main/resources/Saskatchewan/turtle.jpg",
-                "src/main/resources/Saskatchewan/pike.jpg"
+                "src/resources/Saskatchewan/antelope.jpg",
+                "src/resources/Saskatchewan/badger.jpg",
+                "src/resources/Saskatchewan/grouse.jpg",
+                "src/resources/Saskatchewan/turtle.jpg",
+                "src/resources/Saskatchewan/pike.jpg"
         };
         for (int i = 0; i < animals.length; i++) {
             JPanel animalPanel = new JPanel(new BorderLayout());
@@ -749,11 +749,11 @@ public class MainFrame extends JFrame {
         };
 
         String[] animalImages = {
-                "src/main/resources/Alberta/bear.jpg",
-                "src/main/resources/Alberta/sheep.jpg",
-                "src/main/resources/Alberta/elk.jpg",
-                "src/main/resources/Alberta/trout.jpg",
-                "src/main/resources/Alberta/owl.jpg"
+                "src/resources/Alberta/bear.jpg",
+                "src/resources/Alberta/sheep.jpg",
+                "src/resources/Alberta/elk.jpg",
+                "src/resources/Alberta/trout.jpg",
+                "src/resources/Alberta/owl.jpg"
         };
 
         for (int i = 0; i < animals.length; i++) {
@@ -808,11 +808,11 @@ public class MainFrame extends JFrame {
         };
 
         String[] animalImages = {
-                "src/main/resources/BritishColumbia/marmot.jpg",
-                "src/main/resources/BritishColumbia/bear.jpg",
-                "src/main/resources/BritishColumbia/salmon.jpg",
-                "src/main/resources/BritishColumbia/lion.jpg",
-                "src/main/resources/BritishColumbia/seaotter.jpg"
+                "src/resources/BritishColumbia/marmot.jpg",
+                "src/resources/BritishColumbia/bear.jpg",
+                "src/resources/BritishColumbia/salmon.jpg",
+                "src/resources/BritishColumbia/lion.jpg",
+                "src/resources/BritishColumbia/seaotter.jpg"
         };
 
         for (int i = 0; i < animals.length; i++) {
@@ -865,11 +865,11 @@ public class MainFrame extends JFrame {
         };
 
         String[] animalImages = {
-                "src/main/resources/Yukon/goose.jpg",
-                "src/main/resources/Yukon/sheep.jpg",
-                "src/main/resources/Yukon/squirrel.jpg",
-                "src/main/resources/Yukon/falcon.jpg",
-                "src/main/resources/Yukon/raven.jpg"
+                "src/resources/Yukon/goose.jpg",
+                "src/resources/Yukon/sheep.jpg",
+                "src/resources/Yukon/squirrel.jpg",
+                "src/resources/Yukon/falcon.jpg",
+                "src/resources/Yukon/raven.jpg"
         };
 
         for (int i = 0; i < animals.length; i++) {
@@ -920,11 +920,11 @@ public class MainFrame extends JFrame {
         };
 
         String[] animalImages = {
-                "src/main/resources/NorthwestTerritories/barren.jpg",
-                "src/main/resources/NorthwestTerritories/crane.jpeg",
-                "src/main/resources/NorthwestTerritories/muskox.jpeg",
-                "src/main/resources/NorthwestTerritories/grayling.jpg",
-                "src/main/resources/NorthwestTerritories/eider.jpg"
+                "src/resources/NorthwestTerritories/barren.jpg",
+                "src/resources/NorthwestTerritories/crane.jpeg",
+                "src/resources/NorthwestTerritories/muskox.jpeg",
+                "src/resources/NorthwestTerritories/grayling.jpg",
+                "src/resources/NorthwestTerritories/eider.jpg"
         };
 
         for (int i = 0; i < animals.length; i++) {
@@ -975,11 +975,11 @@ public class MainFrame extends JFrame {
         };
 
         String[] animalImages = {
-                "src/main/resources/NewBrunswick/chipmunk.jpeg",
-                "src/main/resources/NewBrunswick/squirrel.jpg",
-                "src/main/resources/NewBrunswick/mink.jpg",
-                "src/main/resources/NewBrunswick/salamander.jpg",
-                "src/main/resources/NewBrunswick/owl.jpg"
+                "src/resources/NewBrunswick/chipmunk.jpeg",
+                "src/resources/NewBrunswick/squirrel.jpg",
+                "src/resources/NewBrunswick/mink.jpg",
+                "src/resources/NewBrunswick/salamander.jpg",
+                "src/resources/NewBrunswick/owl.jpg"
         };
 
         for (int i = 0; i < animals.length; i++) {
@@ -1032,11 +1032,11 @@ public class MainFrame extends JFrame {
         };
 
         String[] animalImages = {
-                "src/main/resources/PrinceEdwardIsland/shrike.jpeg",
-                "src/main/resources/PrinceEdwardIsland/shrew.jpg",
-                "src/main/resources/PrinceEdwardIsland/heron.jpg",
-                "src/main/resources/PrinceEdwardIsland/turtle.jpg",
-                "src/main/resources/PrinceEdwardIsland/spider.jpeg"
+                "src/resources/PrinceEdwardIsland/shrike.jpeg",
+                "src/resources/PrinceEdwardIsland/shrew.jpg",
+                "src/resources/PrinceEdwardIsland/heron.jpg",
+                "src/resources/PrinceEdwardIsland/turtle.jpg",
+                "src/resources/PrinceEdwardIsland/spider.jpeg"
         };
 
         for (int i = 0; i < animals.length; i++) {
@@ -1088,11 +1088,11 @@ public class MainFrame extends JFrame {
         };
 
         String[] animalImages = {
-                "src/main/resources/NewfoundlandandLabrador/dog.jpg",
-                "src/main/resources/NewfoundlandandLabrador/seal.jpeg",
-                "src/main/resources/NewfoundlandandLabrador/marten.jpg",
-                "src/main/resources/NewfoundlandandLabrador/star.jpg",
-                "src/main/resources/NewfoundlandandLabrador/whale.jpg"
+                "src/resources/NewfoundlandandLabrador/dog.jpg",
+                "src/resources/NewfoundlandandLabrador/seal.jpeg",
+                "src/resources/NewfoundlandandLabrador/marten.jpg",
+                "src/resources/NewfoundlandandLabrador/star.jpg",
+                "src/resources/NewfoundlandandLabrador/whale.jpg"
         };
 
         for (int i = 0; i < animals.length; i++) {
@@ -1151,11 +1151,11 @@ public class MainFrame extends JFrame {
         };
 
         String[] animalImages = {
-                "src/main/resources/Nunavut/bear.jpeg",
-                "src/main/resources/Nunavut/caribou.jpg",
-                "src/main/resources/Nunavut/fox.jpg",
-                "src/main/resources/Nunavut/owl.jpeg",
-                "src/main/resources/Nunavut/whale.jpg"
+                "src/resources/Nunavut/bear.jpeg",
+                "src/resources/Nunavut/caribou.jpg",
+                "src/resources/Nunavut/fox.jpg",
+                "src/resources/Nunavut/owl.jpeg",
+                "src/resources/Nunavut/whale.jpg"
         };
 
         for (int i = 0; i < animals.length; i++) {
@@ -1224,11 +1224,11 @@ public class MainFrame extends JFrame {
 
         // Choose a special "main" image for each animal
         String mainImagePath = switch (name) {
-            case "Polar Bear" -> "src/main/resources/Nunavut/bearmain.jpeg";
-            case "Caribou" -> "src/main/resources/Nunavut/cariboumain.jpg";
-            case "Arctic Fox" -> "src/main/resources/Nunavut/foxmain.jpg";
-            case "Snowy Owl" -> "src/main/resources/Nunavut/owlmain.jpg";
-            case "Beluga Whale" -> "src/main/resources/Nunavut/whalemain.png";
+            case "Polar Bear" -> "src/resources/Nunavut/bearmain.jpeg";
+            case "Caribou" -> "src/resources/Nunavut/cariboumain.jpg";
+            case "Arctic Fox" -> "src/resources/Nunavut/foxmain.jpg";
+            case "Snowy Owl" -> "src/resources/Nunavut/owlmain.jpg";
+            case "Beluga Whale" -> "src/resources/Nunavut/whalemain.png";
             default -> thumbnailPath;  // Fallback to clicked image if no special one exists
         };
 
@@ -1273,34 +1273,34 @@ public class MainFrame extends JFrame {
 
         String[] additionalImages = switch (name) {
             case "Polar Bear" -> new String[]{
-                    "src/main/resources/Nunavut/bear1.jpg",
-                    "src/main/resources/Nunavut/bear2.png",
-                    "src/main/resources/Nunavut/bear3.jpg",
-                    "src/main/resources/Nunavut/bear4.jpg"
+                    "src/resources/Nunavut/bear1.jpg",
+                    "src/resources/Nunavut/bear2.png",
+                    "src/resources/Nunavut/bear3.jpg",
+                    "src/resources/Nunavut/bear4.jpg"
             };
             case "Caribou" -> new String[]{
-                    "src/main/resources/Nunavut/caribou1.jpg",
-                    "src/main/resources/Nunavut/caribou2.jpg",
-                    "src/main/resources/Nunavut/caribou3.jpg",
-                    "src/main/resources/Nunavut/caribou4.jpg"
+                    "src/resources/Nunavut/caribou1.jpg",
+                    "src/resources/Nunavut/caribou2.jpg",
+                    "src/resources/Nunavut/caribou3.jpg",
+                    "src/resources/Nunavut/caribou4.jpg"
             };
             case "Arctic Fox" -> new String[]{
-                    "src/main/resources/Nunavut/fox1.jpg",
-                    "src/main/resources/Nunavut/fox2.jpg",
-                    "src/main/resources/Nunavut/fox3.jpg",
-                    "src/main/resources/Nunavut/fox4.jpg"
+                    "src/resources/Nunavut/fox1.jpg",
+                    "src/resources/Nunavut/fox2.jpg",
+                    "src/resources/Nunavut/fox3.jpg",
+                    "src/resources/Nunavut/fox4.jpg"
             };
             case "Snowy Owl" -> new String[]{
-                    "src/main/resources/Nunavut/owl1.jpg",
-                    "src/main/resources/Nunavut/owl2.jpg",
-                    "src/main/resources/Nunavut/owl3.jpg",
-                    "src/main/resources/Nunavut/owl4.jpg"
+                    "src/resources/Nunavut/owl1.jpg",
+                    "src/resources/Nunavut/owl2.jpg",
+                    "src/resources/Nunavut/owl3.jpg",
+                    "src/resources/Nunavut/owl4.jpg"
             };
             case "Beluga Whale" -> new String[]{
-                    "src/main/resources/Nunavut/whale1.jpg",
-                    "src/main/resources/Nunavut/whale2.jpeg",
-                    "src/main/resources/Nunavut/whale3.jpg",
-                    "src/main/resources/Nunavut/whale4.jpg"
+                    "src/resources/Nunavut/whale1.jpg",
+                    "src/resources/Nunavut/whale2.jpeg",
+                    "src/resources/Nunavut/whale3.jpg",
+                    "src/resources/Nunavut/whale4.jpg"
             };
             default -> new String[0];
         };
