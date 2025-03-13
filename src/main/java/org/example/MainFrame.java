@@ -7,7 +7,7 @@ public class MainFrame extends JFrame {
 
     private JLabel titleLabel;
     private JPanel statusPanel, mapPanel;
-    private JButton viewMapButton, loginButton, signInButton;
+    private JButton viewMapButton, loginButton, signInButton,searchBar;
     private JLayeredPane layeredPane;
     private JLabel mapLabel;
     private String savedUsername = null; // Store the username temporarily
@@ -55,9 +55,11 @@ public class MainFrame extends JFrame {
         // Initially only "View Map" and "Log In" buttons
         viewMapButton = createStyledButton("View Map");
         loginButton = createStyledButton("Log In");
+        searchBar = createStyledButton("Search");
 
         loginButton.addActionListener(evt -> loginActionPerformed());
         viewMapButton.addActionListener(evt -> loadMap());
+        searchBar.addActionListener(evt -> search());
 
         // Add buttons to sidebar
         updateSidebarButtons(false);
@@ -146,6 +148,10 @@ public class MainFrame extends JFrame {
             viewMapButton.setAlignmentX(Component.LEFT_ALIGNMENT);
             statusPanel.add(viewMapButton);
 
+            searchBar.setMaximumSize(new Dimension(sidebarWidth, 40)); // Full width
+            searchBar.setAlignmentX(Component.LEFT_ALIGNMENT);
+            statusPanel.add(searchBar);
+
             // Log Out button (full width)
             JButton logoutButton = createStyledButton("Log Out", new Color(45, 45, 45), Color.RED);
             logoutButton.setMaximumSize(new Dimension(sidebarWidth, 40)); // Full width
@@ -169,6 +175,10 @@ public class MainFrame extends JFrame {
             viewMapButton.setMaximumSize(new Dimension(sidebarWidth, 40));
             viewMapButton.setAlignmentX(Component.LEFT_ALIGNMENT);
             statusPanel.add(viewMapButton);
+
+            searchBar.setMaximumSize(new Dimension(sidebarWidth, 40)); // Full width
+            searchBar.setAlignmentX(Component.LEFT_ALIGNMENT);
+            statusPanel.add(searchBar);
         }
 
         statusPanel.revalidate();
@@ -199,6 +209,142 @@ public class MainFrame extends JFrame {
         // Update Sidebar After Login
         updateSidebarButtons(true);
     }
+
+    private void search() {
+        JTextField searchField = new JTextField();
+        Object[] message = {"Search:", searchField};
+        int option = JOptionPane.showConfirmDialog(this, message, "Search", JOptionPane.OK_CANCEL_OPTION);
+
+        if (option == JOptionPane.OK_OPTION) {
+            String searchQuery = searchField.getText().trim().toLowerCase();
+            if (!searchQuery.isEmpty()) {
+                // Perform the search and display results
+                displaySearchResults(searchQuery);
+            } else {
+                JOptionPane.showMessageDialog(this, "Please enter a search term.", "Search Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void displaySearchResults(String searchQuery) {
+        // Create a list of all animals and provinces for searching
+        String[] provinces = {
+                "Ontario", "Quebec", "Nova Scotia", "New Brunswick", "Manitoba",
+                "Saskatchewan", "Alberta", "British Columbia", "Yukon",
+                "Prince Edward Island", "Newfoundland and Labrador", "Northwest Territories", "Nunavut"
+        };
+
+        // List of animals (you can expand this list with more animals if needed)
+        String[] animals = {
+                "Moose", "Beaver", "Eastern Wolf", "Common Loon", "Blanding's Turtle",
+                "Canada Lynx", "Atlantic Puffin", "Black Bear", "Harlequin Duck", "Striped Skunk",
+                "White-tailed Deer", "Bald Eagle", "Eastern Coyote", "Harbor Seal", "Snowshoe Hare",
+                "Plains Bison", "Gray Wolf", "Wolverine", "Red Fox", "Great Gray Owl",
+                "Pronghorn Antelope", "American Badger", "Sharp-tailed Grouse", "Western Painted Turtle", "Northern Pike",
+                "Grizzly Bear", "Rocky Mountain Bighorn Sheep", "Elk (Wapiti)", "Bull Trout", "Great Horned Owl",
+                "Vancouver Island Marmot", "Spirit Bear (Kermode Bear)", "Pacific Salmon", "Mountain Lion (Cougar)", "Sea Otter",
+                "Canada Goose", "Dall Sheep", "Arctic Ground Squirrel", "Peregrine Falcon", "Raven",
+                "Barren-ground Caribou", "Whooping Crane", "Muskox", "Arctic Grayling", "Eider",
+                "Eastern Chipmunk", "Northern Flying Squirrel", "Mink", "Spotted Salamander", "Barred Owl",
+                "Northern Shrike", "Island Shrew", "Great Blue Heron", "Eastern Box Turtle", "PEI Jumping Spider",
+                "Labrador Retriever", "Northern Fur Seal", "Pine Marten", "Caribbean Sea Star", "Minke Whale",
+                "Polar Bear", "Caribou", "Arctic Fox", "Snowy Owl", "Beluga Whale"
+        };
+
+        // Create a list to store search results
+        java.util.List<String> results = new java.util.ArrayList<>();
+
+        // Search through provinces
+        for (String province : provinces) {
+            if (province.toLowerCase().contains(searchQuery)) {
+                results.add("Province: " + province);
+            }
+        }
+
+        // Search through animals
+        for (String animal : animals) {
+            if (animal.toLowerCase().contains(searchQuery)) {
+                results.add("Animal: " + animal);
+            }
+        }
+
+        // Display the results in a new window with a clickable list
+        if (results.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No results found for: " + searchQuery, "Search Results", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JFrame resultsFrame = new JFrame("Search Results");
+            resultsFrame.setSize(400, 300);
+            resultsFrame.setLayout(new BorderLayout());
+
+            // Create a JList to display the results
+            JList<String> resultsList = new JList<>(results.toArray(new String[0]));
+            resultsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            resultsList.addListSelectionListener(e -> {
+                if (!e.getValueIsAdjusting()) {
+                    String selectedItem = resultsList.getSelectedValue();
+                    if (selectedItem != null) {
+                        handleSearchResultSelection(selectedItem);
+                    }
+                }
+            });
+
+            // Add the JList to a scroll pane
+            JScrollPane scrollPane = new JScrollPane(resultsList);
+            resultsFrame.add(scrollPane, BorderLayout.CENTER);
+
+            resultsFrame.setVisible(true);
+        }
+    }
+
+    private void handleSearchResultSelection(String selectedItem) {
+        String[] parts = selectedItem.split(": ");
+        String type = parts[0]; // "Animal" or "Province"
+        String name = parts[1]; // The name of the animal or province
+
+        // Handle the selection based on the type
+        if (type.equals("Animal")) {
+            openAnimalDetails(name);
+        } else if (type.equals("Province")) {
+            openProvinceDetails(name);
+        }
+    }
+
+    private void openAnimalDetails(String animalName) {
+
+    }
+
+    private void openProvinceDetails(String provinceName) {
+        if (provinceName.equals("Ontario")) {
+            showOntarioAnimals();
+        } else if (provinceName.equals("Quebec")) {
+            showQuebecAnimals();
+        } else if (provinceName.equals("Nova Scotia")) {
+            showNovaScotiaAnimals();
+        } else if (provinceName.equals("New Brunswick")) {
+            showNewBrunswickAnimals();
+        } else if (provinceName.equals("Manitoba")) {
+            showManitobaAnimals();
+        } else if (provinceName.equals("Saskatchewan")) {
+            showSaskatchewanAnimals();
+        } else if (provinceName.equals("Alberta")) {
+            showAlbertaAnimals();
+        } else if (provinceName.equals("British Columbia")) {
+            showBritishColumbiaAnimals();
+        } else if (provinceName.equals("Yukon")) {
+            showYukonAnimals();
+        } else if (provinceName.equals("Prince Edward Island")) {
+            showPrinceEdwardIslandAnimals();
+        } else if (provinceName.equals("Newfoundland and Labrador")) {
+            showNewfoundlandandLabradorAnimals();
+        } else if (provinceName.equals("Northwest Territories")) {
+            showNorthwestTerritoriesAnimals();
+        } else if (provinceName.equals("Nunavut")) {
+            showNunavutAnimals();
+        }
+    }
+
+
+
 
 
     /**
