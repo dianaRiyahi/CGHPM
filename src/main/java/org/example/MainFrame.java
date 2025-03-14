@@ -1,3 +1,4 @@
+package org.example;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -67,7 +68,7 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
-    private JButton createStyledButton(String text) {
+    public JButton createStyledButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.BOLD, 12));
         button.setForeground(Color.WHITE);
