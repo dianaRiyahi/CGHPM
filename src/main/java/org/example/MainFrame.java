@@ -3,6 +3,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainFrame extends JFrame {
 
@@ -69,7 +72,35 @@ public class MainFrame extends JFrame {
 
         setVisible(true);
     }
+    private void openArticlesFrame() {
+        JFrame articlesFrame = new JFrame("Articles");
+        articlesFrame.setSize(600, 400);
+        articlesFrame.setLayout(new GridLayout(5, 1));
 
+        String[][] articles = {
+                {"Climate Change & Wildlife", "https://www.wwf.org"},
+                {"Endangered Species in Canada", "https://www.canada.ca"},
+                {"Wildlife Protection Efforts", "https://www.nationalgeographic.com"},
+                {"Impact of Deforestation", "https://www.un.org/sustainabledevelopment"},
+                {"How You Can Help Wildlife", "https://www.worldwildlife.org/get-involved"}
+        };
+
+        for (String[] article : articles) {
+            JButton linkButton = new JButton(article[0]);
+            linkButton.addActionListener(e -> openWebpage(article[1]));
+            articlesFrame.add(linkButton);
+        }
+
+        articlesFrame.setVisible(true);
+    }
+
+    private void openWebpage(String url) {
+        try {
+            Desktop.getDesktop().browse(new URI(url));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Failed to open the link!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.BOLD, 12));
@@ -128,8 +159,8 @@ public class MainFrame extends JFrame {
         statusPanel.removeAll();
 
         int sidebarWidth = statusPanel.getPreferredSize().width; // Get sidebar width to apply to buttons
-
         if (loggedIn) {
+            // Buttons to be shown after login
             String[] loggedInLabels = {
                     "Subscribe to Newsletter",
                     "View Articles",
@@ -141,29 +172,21 @@ public class MainFrame extends JFrame {
 
             for (String label : loggedInLabels) {
                 JButton button = createStyledButton(label);
-                button.setMaximumSize(new Dimension(sidebarWidth, 40)); // Full width button
+                button.setMaximumSize(new Dimension(sidebarWidth, 40));
                 button.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+                if (label.equals("View Articles")) {
+                    button.addActionListener(e -> openArticlesFrame());
+                }
+
                 statusPanel.add(button);
             }
-
-            // View Map button (always visible)
-            viewMapButton.setMaximumSize(new Dimension(sidebarWidth, 40)); // Full width
-            viewMapButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-            statusPanel.add(viewMapButton);
-
-            searchBar.setMaximumSize(new Dimension(sidebarWidth, 40)); // Full width
-            searchBar.setAlignmentX(Component.LEFT_ALIGNMENT);
-            statusPanel.add(searchBar);
-
-            // Log Out button (full width)
             JButton logoutButton = createStyledButton("Log Out", new Color(45, 45, 45), Color.RED);
-            logoutButton.setMaximumSize(new Dimension(sidebarWidth, 40)); // Full width
+            logoutButton.setMaximumSize(new Dimension(sidebarWidth, 40));
             logoutButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-            logoutButton.addActionListener(e -> updateSidebarButtons(false));
+            logoutButton.addActionListener(e -> logoutActionPerformed());
             statusPanel.add(logoutButton);
-
         } else {
-            // Login and Sign In buttons (full width)
             loginButton.setMaximumSize(new Dimension(sidebarWidth, 40));
             loginButton.setAlignmentX(Component.LEFT_ALIGNMENT);
             statusPanel.add(loginButton);
@@ -174,12 +197,11 @@ public class MainFrame extends JFrame {
             signInButton.addActionListener(evt -> signInActionPerformed());
             statusPanel.add(signInButton);
 
-            // View Map button (full width)
             viewMapButton.setMaximumSize(new Dimension(sidebarWidth, 40));
             viewMapButton.setAlignmentX(Component.LEFT_ALIGNMENT);
             statusPanel.add(viewMapButton);
 
-            searchBar.setMaximumSize(new Dimension(sidebarWidth, 40)); // Full width
+            searchBar.setMaximumSize(new Dimension(sidebarWidth, 40));
             searchBar.setAlignmentX(Component.LEFT_ALIGNMENT);
             statusPanel.add(searchBar);
         }
@@ -187,7 +209,12 @@ public class MainFrame extends JFrame {
         statusPanel.revalidate();
         statusPanel.repaint();
     }
-
+    
+    private void logoutActionPerformed() {
+        savedUsername = null;
+        JOptionPane.showMessageDialog(this, "You have been logged out.", "Log Out", JOptionPane.INFORMATION_MESSAGE);
+        updateSidebarButtons(false);
+    }
     // Sign In Functionality (Store the username temporarily)
     private void signInActionPerformed() {
         JTextField usernameField = new JTextField();
@@ -312,8 +339,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void openAnimalDetails(String animalName) {
-
+    private void openAnimalDetails(String name) {
     }
 
     private void openProvinceDetails(String provinceName) {
