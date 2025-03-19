@@ -20,9 +20,9 @@ You are able to run our program by compiling with Maven and Java if you would li
 
 ## With Mavan and Java 23
 Requirements: 
-Java Development Kit (JDK): Version 23 or later: https://www.oracle.com/ca-en/java/technologies/downloads/ 
-Apache Maven: Version 3.8 or later: https://maven.apache.org/download.cgi 
-An IDE (e.g., IntelliJ IDEA, Eclipse) or a terminal for command-line execution
+- Java Development Kit (JDK): Version 23 or later: https://www.oracle.com/ca-en/java/technologies/downloads/ 
+- Apache Maven: Version 3.8 or later: https://maven.apache.org/download.cgi 
+- An IDE (e.g., IntelliJ IDEA, Eclipse) or a terminal for command-line execution
 
 1. Clone the git repository.
    ```bash
@@ -44,6 +44,7 @@ An IDE (e.g., IntelliJ IDEA, Eclipse) or a terminal for command-line execution
 ## With Just Java 23 <a name="J"></a>
 Requirements: 
 - Java 23: https://www.oracle.com/ca-en/java/technologies/downloads/
+- 
 1. First clone the git repository
     ```bash
     git clone https://github.com/dianaRiyahi/CGHPM.git
