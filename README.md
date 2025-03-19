@@ -44,7 +44,7 @@ Requirements:
 ## With Just Java 23 <a name="J"></a>
 Requirements: 
 - Java 23: https://www.oracle.com/ca-en/java/technologies/downloads/
-- 
+  
 1. First clone the git repository
     ```bash
     git clone https://github.com/dianaRiyahi/CGHPM.git
