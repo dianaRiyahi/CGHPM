@@ -21,7 +21,8 @@ You are able to run our program by compiling with Maven and Java if you would li
 ## With Mavan and Java 23
 Requirements: <br>
 Java Development Kit (JDK): Version 23 or later: https://www.oracle.com/ca-en/java/technologies/downloads/ <br/>
-Apache Maven: Version 3.8 or later: https://maven.apache.org/download.cgi
+Apache Maven: Version 3.8 or later: https://maven.apache.org/download.cgi 
+
 An IDE (e.g., IntelliJ IDEA, Eclipse) or a terminal for command-line execution
 
 1. Clone the git repository.
