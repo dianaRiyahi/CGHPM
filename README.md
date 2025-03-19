@@ -14,3 +14,46 @@ The following product allows you to see a map of Canada, and click on each provi
    -  Click on "Not for Hunt" to see a list of all animals residing in Canada that have been legally protected by the Government.
    -  Click on "Some facts" in order to see fun facts about animals.
    -  Click on "Emergency Contact" if you have information you would like to report about the wildlife.
+
+# HOW TO RUN
+You are able to run our program by compiling with Maven and Java if you would like to build the jar file. Or you can just run it with java.
+
+## With Mavan and Java 23
+Requirements: <br>
+Java Development Kit (JDK): Version 23 or later: https://www.oracle.com/ca-en/java/technologies/downloads/ <br/>
+Apache Maven: Version 3.8 or later: https://maven.apache.org/download.cgi
+An IDE (e.g., IntelliJ IDEA, Eclipse) or a terminal for command-line execution
+
+1. Clone the git repository.
+   ```bash
+    git clone https://github.com/dianaRiyahi/CGHPM.git
+    ```
+2. Go into the project directory.
+   ```bash
+    cd CGHPM
+   ```
+3. Build the Jar File
+   ```bash
+    mvn clean install
+   ```
+4. Execute the Jar file with the following command
+    ```bash
+    mvn exec:java -Dexec.mainClass="CGHPM.MainFrame"
+    ```
+
+## With Just Java 23 <a name="J"></a>
+Requirements: <br>
+- Java 23: https://www.oracle.com/ca-en/java/technologies/downloads/
+1. First clone the git repository
+    ```bash
+    git clone https://github.com/dianaRiyahi/CGHPM.git
+    ```
+2. Then navigate to the main file with the following command.
+    ```bash
+    cd CGHPM/src/main/java/MainFrame
+    ```
+3.  Then finally to run the program run and then the program should pop up.
+    ```bash
+    java MainFrame.java
+    ```
+
