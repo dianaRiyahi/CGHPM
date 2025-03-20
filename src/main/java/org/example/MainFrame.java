@@ -1,8 +1,5 @@
 package org.example;
-<<<<<<< HEAD
-=======
 
->>>>>>> bb9dc94acd84bf82a2521ccaaeafce2a6b06a33f
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -21,6 +18,9 @@ public class MainFrame extends JFrame {
     private JLayeredPane layeredPane;
     private JLabel mapLabel;
     private String savedUsername = null; // Store the username temporarily
+    private JTextField searchField;
+    private JPanel rightSidebar; // Panel for search results
+
 
     public MainFrame() {
         initComponents();
@@ -34,22 +34,81 @@ public class MainFrame extends JFrame {
         getContentPane().setBackground(Color.WHITE);
         setLayout(new BorderLayout());
 
-        // Title Label
-        titleLabel = new JLabel("Wildlife Information Portal", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 26));
-        titleLabel.setOpaque(true);
-        titleLabel.setBackground(new Color(32, 33, 34)); // Dark blue header
+        // Top Panel (Header)
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(new Color(32, 33, 34)); // Dark blue header
+        topPanel.setPreferredSize(new Dimension(getWidth(), 70)); // Fixed height for the header
+
+        // Title Label (Smaller Font)
+        JLabel titleLabel = new JLabel("Wildlife Information Portal", SwingConstants.LEFT);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Reduced font size
         titleLabel.setForeground(Color.WHITE);
-        titleLabel.setPreferredSize(new Dimension(getWidth(), 70));
-        add(titleLabel, BorderLayout.NORTH);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0)); // Left padding
+        topPanel.add(titleLabel, BorderLayout.WEST);
+
+        // Search Bar in the Top Panel
+        JPanel searchBarPanel = new JPanel(new BorderLayout());
+        searchBarPanel.setBackground(new Color(32, 33, 34)); // Match the header color
+        searchBarPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 20)); // Padding
+
+        // Search Text Field
+        searchField = new JTextField();
+        searchField.setFont(new Font("Arial", Font.PLAIN, 14));
+        searchField.setPreferredSize(new Dimension(400, 30)); // Set preferred size
+        searchField.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+
+        // Search Button
+        JButton searchButton = new JButton("Search");
+        searchButton.setFont(new Font("Arial", Font.BOLD, 12));
+        searchButton.setBackground(new Color(66, 133, 244)); // Google blue
+        searchButton.setForeground(Color.WHITE);
+        searchButton.setFocusPainted(false);
+        searchButton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        searchButton.addActionListener(e -> {
+            String searchQuery = searchField.getText().trim();
+            if (!searchQuery.isEmpty()) {
+                displaySearchResults(searchQuery);
+            } else {
+                JOptionPane.showMessageDialog(this, "Please enter a search term.", "Search Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        // Add components to the search bar panel
+        searchBarPanel.add(searchField, BorderLayout.CENTER);
+        searchBarPanel.add(searchButton, BorderLayout.EAST);
+
+        // Add the search bar panel to the top panel
+        topPanel.add(searchBarPanel, BorderLayout.CENTER);
+
+        // Add the top panel to the frame
+        add(topPanel, BorderLayout.NORTH);
+
+        // Right Sidebar (Search Results Panel)
+        rightSidebar = new JPanel();
+        rightSidebar.setLayout(new BoxLayout(rightSidebar, BoxLayout.Y_AXIS)); // Vertical layout
+        rightSidebar.setBackground(new Color(245, 245, 245)); // Light gray background
+        rightSidebar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Padding
+        rightSidebar.setPreferredSize(new Dimension(250, getHeight())); // Fixed width
+        add(rightSidebar, BorderLayout.EAST); // Add to the right side of the frame
+
 
         // Sidebar (Sleek Dark Gray)
         statusPanel = new JPanel();
-        statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
+        statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS)); // Vertical layout
         statusPanel.setBackground(new Color(45, 45, 45)); // Modern Dark Gray
-        statusPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        statusPanel.setPreferredSize(new Dimension(220, getHeight()));
+        statusPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Padding
+        statusPanel.setPreferredSize(new Dimension(220, getHeight() - 70)); // Adjust height to account for header
         add(statusPanel, BorderLayout.WEST);
+
+        // Initially only "View Map" and "Log In" buttons
+        viewMapButton = createStyledButton("View Map");
+        loginButton = createStyledButton("Log In");
+
+        loginButton.addActionListener(evt -> loginActionPerformed());
+        viewMapButton.addActionListener(evt -> loadMap());
+
+        // Add buttons to sidebar
+        updateSidebarButtons(false);
 
         // Map Panel
         mapPanel = new JPanel(new BorderLayout());
@@ -61,18 +120,6 @@ public class MainFrame extends JFrame {
         mapPanel.add(layeredPane, BorderLayout.CENTER);
         mapPanel.setBackground(Color.lightGray);
         add(mapPanel, BorderLayout.CENTER);
-
-        // Initially only "View Map" and "Log In" buttons
-        viewMapButton = createStyledButton("View Map");
-        loginButton = createStyledButton("Log In");
-        searchBar = createStyledButton("Search");
-
-        loginButton.addActionListener(evt -> loginActionPerformed());
-        viewMapButton.addActionListener(evt -> loadMap());
-        searchBar.addActionListener(evt -> search());
-
-        // Add buttons to sidebar
-        updateSidebarButtons(false);
 
         setVisible(true);
     }
@@ -204,16 +251,12 @@ public class MainFrame extends JFrame {
             viewMapButton.setMaximumSize(new Dimension(sidebarWidth, 40));
             viewMapButton.setAlignmentX(Component.LEFT_ALIGNMENT);
             statusPanel.add(viewMapButton);
-
-            searchBar.setMaximumSize(new Dimension(sidebarWidth, 40));
-            searchBar.setAlignmentX(Component.LEFT_ALIGNMENT);
-            statusPanel.add(searchBar);
         }
 
         statusPanel.revalidate();
         statusPanel.repaint();
     }
-    
+
     private void logoutActionPerformed() {
         savedUsername = null;
         JOptionPane.showMessageDialog(this, "You have been logged out.", "Log Out", JOptionPane.INFORMATION_MESSAGE);
@@ -253,7 +296,17 @@ public class MainFrame extends JFrame {
             String searchQuery = searchField.getText().trim().toLowerCase();
             if (!searchQuery.isEmpty()) {
                 // Perform the search and display results
-                displaySearchResults(searchQuery);
+                List<String> results = displaySearchResults(searchQuery);
+                if (!results.isEmpty()) {
+                    // If the search result is a province, open its details
+                    for (String result : results) {
+                        if (result.startsWith("Province: ")) {
+                            String provinceName = result.substring("Province: ".length());
+                            openProvinceDetails(provinceName);
+                            break; // Open the first matching province
+                        }
+                    }
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Please enter a search term.", "Search Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -261,91 +314,67 @@ public class MainFrame extends JFrame {
     }
 
     private List<String> displaySearchResults(String searchQuery) {
-        // Create a list of all animals and provinces for searching
+        // Clear the existing content in the right sidebar
+        rightSidebar.removeAll();
+        rightSidebar.revalidate();
+        rightSidebar.repaint();
+
+        // List of provinces
         String[] provinces = {
                 "Ontario", "Quebec", "Nova Scotia", "New Brunswick", "Manitoba",
                 "Saskatchewan", "Alberta", "British Columbia", "Yukon",
                 "Prince Edward Island", "Newfoundland and Labrador", "Northwest Territories", "Nunavut"
         };
 
-        // List of animals (you can expand this list with more animals if needed)
-        String[] animals = {
-                "Moose", "Beaver", "Eastern Wolf", "Common Loon", "Blanding's Turtle",
-                "Canada Lynx", "Atlantic Puffin", "Black Bear", "Harlequin Duck", "Striped Skunk",
-                "White-tailed Deer", "Bald Eagle", "Eastern Coyote", "Harbor Seal", "Snowshoe Hare",
-                "Plains Bison", "Gray Wolf", "Wolverine", "Red Fox", "Great Gray Owl",
-                "Pronghorn Antelope", "American Badger", "Sharp-tailed Grouse", "Western Painted Turtle", "Northern Pike",
-                "Grizzly Bear", "Rocky Mountain Bighorn Sheep", "Elk (Wapiti)", "Bull Trout", "Great Horned Owl",
-                "Vancouver Island Marmot", "Spirit Bear (Kermode Bear)", "Pacific Salmon", "Mountain Lion (Cougar)", "Sea Otter",
-                "Canada Goose", "Dall Sheep", "Arctic Ground Squirrel", "Peregrine Falcon", "Raven",
-                "Barren-ground Caribou", "Whooping Crane", "Muskox", "Arctic Grayling", "Eider",
-                "Eastern Chipmunk", "Northern Flying Squirrel", "Mink", "Spotted Salamander", "Barred Owl",
-                "Northern Shrike", "Island Shrew", "Great Blue Heron", "Eastern Box Turtle", "PEI Jumping Spider",
-                "Labrador Retriever", "Northern Fur Seal", "Pine Marten", "Caribbean Sea Star", "Minke Whale",
-                "Polar Bear", "Caribou", "Arctic Fox", "Snowy Owl", "Beluga Whale"
-        };
-
         // Create a list to store search results
-        java.util.List<String> results = new java.util.ArrayList<>();
+        List<String> results = new ArrayList<>();
 
         // Search through provinces
         for (String province : provinces) {
-            if (province.toLowerCase().contains(searchQuery)) {
+            if (province.toLowerCase().contains(searchQuery.toLowerCase())) {
                 results.add("Province: " + province);
             }
         }
 
-        // Search through animals
-        for (String animal : animals) {
-            if (animal.toLowerCase().contains(searchQuery)) {
-                results.add("Animal: " + animal);
+        // Display the results in the right sidebar
+        if (results.isEmpty()) {
+            JLabel noResultsLabel = new JLabel("No results found for: " + searchQuery);
+            noResultsLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+            rightSidebar.add(noResultsLabel);
+        } else {
+            for (String result : results) {
+                JButton resultButton = new JButton(result);
+                resultButton.setFont(new Font("Arial", Font.PLAIN, 12));
+                resultButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+                resultButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, resultButton.getPreferredSize().height)); // Make buttons full width
+                resultButton.addActionListener(e -> handleSearchResultSelection(result));
+                rightSidebar.add(resultButton);
             }
         }
 
-        // Display the results in a new window with a clickable list
-        if (results.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No results found for: " + searchQuery, "Search Results", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JFrame resultsFrame = new JFrame("Search Results");
-            resultsFrame.setSize(400, 300);
-            resultsFrame.setLayout(new BorderLayout());
+        // Add some spacing at the bottom
+        rightSidebar.add(Box.createVerticalGlue());
 
-            // Create a JList to display the results
-            JList<String> resultsList = new JList<>(results.toArray(new String[0]));
-            resultsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            resultsList.addListSelectionListener(e -> {
-                if (!e.getValueIsAdjusting()) {
-                    String selectedItem = resultsList.getSelectedValue();
-                    if (selectedItem != null) {
-                        handleSearchResultSelection(selectedItem);
-                    }
-                }
-            });
+        // Refresh the sidebar
+        rightSidebar.revalidate();
+        rightSidebar.repaint();
 
-            // Add the JList to a scroll pane
-            JScrollPane scrollPane = new JScrollPane(resultsList);
-            resultsFrame.add(scrollPane, BorderLayout.CENTER);
-
-            resultsFrame.setVisible(true);
-        }
-
-        return results; //return results for testing
+        return results; // Return results for further processing
     }
 
     private void handleSearchResultSelection(String selectedItem) {
         String[] parts = selectedItem.split(": ");
-        String type = parts[0]; // "Animal" or "Province"
-        String name = parts[1]; // The name of the animal or province
+        String type = parts[0]; // "Province"
+        String name = parts[1]; // The name of the province
 
         // Handle the selection based on the type
-        if (type.equals("Animal")) {
-            openAnimalDetails(name);
-        } else if (type.equals("Province")) {
+        if (type.equals("Province")) {
             openProvinceDetails(name);
         }
     }
 
     private void openAnimalDetails(String name) {
+        JOptionPane.showMessageDialog(this, "Animal details for: " + name, "Animal Details", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void openProvinceDetails(String provinceName) {
