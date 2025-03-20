@@ -7,6 +7,9 @@ import java.awt.event.MouseEvent;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class MainFrame extends JFrame {
 
@@ -287,7 +290,27 @@ public class MainFrame extends JFrame {
         // Update Sidebar After Login
         updateSidebarButtons(true);
     }
+    private List<String> loadAnimalNames() {
+        List<String> animalNames = new ArrayList<>();
+        String csvFile = "src/main/resources/wildlife_data.csv";
 
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            String line;
+            br.readLine();
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(","); // Split the line by comma
+                if (data.length > 1) {
+                    String animalName = data[1].trim(); // The "Name" column in the CSV
+                    animalNames.add(animalName);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to load animal data from CSV.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return animalNames;
+    }
     private List<String> displaySearchResults(String searchQuery) {
         // Clear the existing content in the right sidebar
         rightSidebar.removeAll();
@@ -300,6 +323,8 @@ public class MainFrame extends JFrame {
                 "Saskatchewan", "Alberta", "British Columbia", "Yukon",
                 "Prince Edward Island", "Newfoundland and Labrador", "Northwest Territories", "Nunavut"
         };
+        // Load animal names from the CSV file
+        List<String> animalNames = loadAnimalNames();
 
         // Create a list to store search results
         List<String> results = new ArrayList<>();
@@ -308,6 +333,12 @@ public class MainFrame extends JFrame {
         for (String province : provinces) {
             if (province.toLowerCase().contains(searchQuery.toLowerCase())) {
                 results.add("Province: " + province);
+            }
+        }
+        // Search through animals
+        for (String animal : animalNames) {
+            if (animal.toLowerCase().contains(searchQuery.toLowerCase())) {
+                results.add("Animal: " + animal);
             }
         }
 
