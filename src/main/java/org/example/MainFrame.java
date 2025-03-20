@@ -1,4 +1,4 @@
-package org.example;
+package org.example; 
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +28,7 @@ public class MainFrame extends JFrame {
 
     private void initComponents() {
         setTitle("Canadian Wildlife");
-        setSize(1100, 750);
+        setSize(1250, 750);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         getContentPane().setBackground(Color.WHITE);
@@ -36,7 +36,7 @@ public class MainFrame extends JFrame {
 
         // Top Panel (Header)
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBackground(new Color(32, 33, 34)); // Dark blue header
+        topPanel.setBackground(new Color(32, 33, 34));
         topPanel.setPreferredSize(new Dimension(getWidth(), 70)); // Fixed height for the header
 
         // Title Label (Smaller Font)
@@ -49,7 +49,7 @@ public class MainFrame extends JFrame {
         // Search Bar in the Top Panel
         JPanel searchBarPanel = new JPanel(new BorderLayout());
         searchBarPanel.setBackground(new Color(32, 33, 34)); // Match the header color
-        searchBarPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 20)); // Padding
+        searchBarPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Padding
 
         // Search Text Field
         searchField = new JTextField();
@@ -60,10 +60,10 @@ public class MainFrame extends JFrame {
         // Search Button
         JButton searchButton = new JButton("Search");
         searchButton.setFont(new Font("Arial", Font.BOLD, 12));
-        searchButton.setBackground(new Color(66, 133, 244)); // Google blue
+        searchButton.setBackground(new Color(89, 91, 92));
         searchButton.setForeground(Color.WHITE);
         searchButton.setFocusPainted(false);
-        searchButton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        searchButton.setBorder(BorderFactory.createEmptyBorder(3, 10, 3, 10));
         searchButton.addActionListener(e -> {
             String searchQuery = searchField.getText().trim();
             if (!searchQuery.isEmpty()) {
@@ -123,6 +123,7 @@ public class MainFrame extends JFrame {
 
         setVisible(true);
     }
+
     private void openArticlesFrame() {
         JFrame articlesFrame = new JFrame("Articles");
         articlesFrame.setSize(600, 400);
@@ -287,32 +288,6 @@ public class MainFrame extends JFrame {
         updateSidebarButtons(true);
     }
 
-    private void search() {
-        JTextField searchField = new JTextField();
-        Object[] message = {"Search:", searchField};
-        int option = JOptionPane.showConfirmDialog(this, message, "Search", JOptionPane.OK_CANCEL_OPTION);
-
-        if (option == JOptionPane.OK_OPTION) {
-            String searchQuery = searchField.getText().trim().toLowerCase();
-            if (!searchQuery.isEmpty()) {
-                // Perform the search and display results
-                List<String> results = displaySearchResults(searchQuery);
-                if (!results.isEmpty()) {
-                    // If the search result is a province, open its details
-                    for (String result : results) {
-                        if (result.startsWith("Province: ")) {
-                            String provinceName = result.substring("Province: ".length());
-                            openProvinceDetails(provinceName);
-                            break; // Open the first matching province
-                        }
-                    }
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "Please enter a search term.", "Search Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-
     private List<String> displaySearchResults(String searchQuery) {
         // Clear the existing content in the right sidebar
         rightSidebar.removeAll();
@@ -394,8 +369,6 @@ public class MainFrame extends JFrame {
             case "Nunavut" -> showNunavutAnimals();
         }
     }
-
-
     /**
      * Loads the map image and displays province markers.
      */
@@ -409,19 +382,19 @@ public class MainFrame extends JFrame {
         mapLabel.setBounds(x, y, mapLabel.getIcon().getIconWidth(), mapLabel.getIcon().getIconHeight());
 
         // Add province buttons
-        addProvinceButton("Ontario", 460, 435);
-        addProvinceButton("Quebec", 580, 360);
-        addProvinceButton("Nova Scotia", 715, 450);
-        addProvinceButton("New Brunswick", 690, 430);
-        addProvinceButton("Manitoba", 370, 390);
-        addProvinceButton("Saskatchewan", 300, 400);
-        addProvinceButton("Alberta", 240, 390);
-        addProvinceButton("British Columbia", 140, 370);
-        addProvinceButton("Yukon", 130, 220);
-        addProvinceButton("Prince Edward Island", 715, 410);
-        addProvinceButton("Newfoundland and Labrador", 660, 320);
-        addProvinceButton("Northwest Territories", 210, 250);
-        addProvinceButton("Nunavut", 365, 260);
+        addProvinceButton("Ontario", 410, 435);
+        addProvinceButton("Quebec", 510, 370);
+        addProvinceButton("Nova Scotia", 635, 450);
+        addProvinceButton("New Brunswick", 610, 435);
+        addProvinceButton("Manitoba", 320, 400);
+        addProvinceButton("Saskatchewan", 260, 410);
+        addProvinceButton("Alberta", 200, 390);
+        addProvinceButton("British Columbia", 120, 370);
+        addProvinceButton("Yukon", 110, 240);
+        addProvinceButton("Prince Edward Island", 630, 420);
+        addProvinceButton("Newfoundland and Labrador", 590, 340);
+        addProvinceButton("Northwest Territories", 190, 260);
+        addProvinceButton("Nunavut", 315, 270);
 
         JLabel instructionLabel = new JLabel("<html><b>Click on the Green Flags to View Animals of That Province \uD83D\uDEA9.</b></html>");
         instructionLabel.setOpaque(true);
