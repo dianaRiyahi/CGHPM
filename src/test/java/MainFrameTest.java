@@ -64,6 +64,16 @@ public class MainFrameTest {
     }
 
     @Test
+    public void testAnimalsDisplaySearchResults() throws Exception {
+        //use reflection to get the private method
+        method = MainFrame.class.getDeclaredMethod("displaySearchResults", String.class);
+        method.setAccessible(true);  // Make the private method accessible
+
+        List<String> results = (List<String>) method.invoke(mainFrame, "loon");
+        assertTrue(results.contains("Animal: Common Loon"), "The result list does not contain Polar Bear");
+    }
+
+    @Test
     public void testProvinceDisplaySearchResults() throws Exception {
         //use reflection to get the private method
         method = MainFrame.class.getDeclaredMethod("displaySearchResults", String.class);
@@ -72,5 +82,14 @@ public class MainFrameTest {
         List<String> results = (List<String>) method.invoke(mainFrame, "on");
         assertTrue(results.contains("Province: Ontario"), "The result list does not contain Ontario");
         assertTrue(results.contains("Province: Yukon"), "The result list does not contain Yukon");
+    }
+
+    @Test
+    public void testAddData() throws Exception {
+        //use reflection to get the private method
+        method = MainFrame.class.getDeclaredMethod("addData", String.class);
+        method.setAccessible(true);  // Make the private method accessible
+
+        method.invoke(mainFrame, "frog");
     }
 }
