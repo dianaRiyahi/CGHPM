@@ -1,4 +1,8 @@
 package org.example;
+<<<<<<< HEAD
+=======
+
+>>>>>>> bb9dc94acd84bf82a2521ccaaeafce2a6b06a33f
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -101,7 +105,7 @@ public class MainFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Failed to open the link!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    private JButton createStyledButton(String text) {
+    public JButton createStyledButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.BOLD, 12));
         button.setForeground(Color.WHITE);
