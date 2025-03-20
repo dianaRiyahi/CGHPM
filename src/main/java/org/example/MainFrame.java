@@ -1,4 +1,4 @@
-
+package org.example;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -256,7 +256,7 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private void displaySearchResults(String searchQuery) {
+    private List<String> displaySearchResults(String searchQuery) {
         // Create a list of all animals and provinces for searching
         String[] provinces = {
                 "Ontario", "Quebec", "Nova Scotia", "New Brunswick", "Manitoba",
@@ -324,6 +324,8 @@ public class MainFrame extends JFrame {
 
             resultsFrame.setVisible(true);
         }
+
+        return results; //return results for testing
     }
 
     private void handleSearchResultSelection(String selectedItem) {

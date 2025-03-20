@@ -18,7 +18,7 @@ The following product allows you to see a map of Canada, and click on each provi
 # HOW TO RUN
 You are able to run our program by compiling with Maven and Java if you would like to build the jar file. Or you can just run it with java.
 
-## With Mavan and Java 23
+## With Maven and Java 23
 Requirements: 
 - Java Development Kit (JDK): Version 23 or later: https://www.oracle.com/ca-en/java/technologies/downloads/ 
 - Apache Maven: Version 3.8 or later: https://maven.apache.org/download.cgi 
