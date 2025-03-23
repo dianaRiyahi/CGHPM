@@ -149,6 +149,31 @@ public class MainFrame extends JFrame {
         articlesFrame.setVisible(true);
     }
 
+    private void openRestrictedHuntingFrame() {
+        JFrame restrictedHuntingFrame = new JFrame("Articles");
+        restrictedHuntingFrame.setSize(800, 300);
+
+        String[] columns = {"Species", "Season", "Quantity", "Limit Period"};
+        Object[][] data = {
+                {"Muskox", "August 12 - October 17", "2", "Season"},
+                {"Northern Pike", "May 1 - November 26", "2", "Day"},
+                {"Pacific Salmon", "June 6 - October 3", "3", "Day"},
+                {"Caribou", "August 28 - October 27", "1", "Season"},
+                {"Snowshoe Hare", "September 12 - February 10", "6", "Day"},
+                {"Sharp-tailed Grouse", "October 14 - December 18", "4", "Day"},
+                {"Arctic Ground Squirrel", "Year Round", "No limit", "No limit"},
+                {"Beaver", "October 20 - April 3", "10", "Season"},
+                {"Bull Trout", "May 17 - October 2", "Catch and Release(0)", "Catch and Release(0)"},
+                {"Harlequin Duck", "October 20 - January 10", "1", "Day"}
+        };
+
+        JTable table = new JTable(data, columns);
+        restrictedHuntingFrame.add(new JScrollPane(table));
+        restrictedHuntingFrame.setTitle("Hunting Periods and Limits");
+        restrictedHuntingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        restrictedHuntingFrame.setVisible(true);
+    }
+
     private void openWebpage(String url) {
         try {
             Desktop.getDesktop().browse(new URI(url));
@@ -232,6 +257,9 @@ public class MainFrame extends JFrame {
 
                 if (label.equals("View Articles")) {
                     button.addActionListener(e -> openArticlesFrame());
+                }
+                else if (label.equals("Restricted Hunting")) {
+                    button.addActionListener(e -> openRestrictedHuntingFrame());
                 }
 
                 statusPanel.add(button);

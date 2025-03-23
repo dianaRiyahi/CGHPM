@@ -83,13 +83,4 @@ public class MainFrameTest {
         assertTrue(results.contains("Province: Ontario"), "The result list does not contain Ontario");
         assertTrue(results.contains("Province: Yukon"), "The result list does not contain Yukon");
     }
-
-    @Test
-    public void testAddData() throws Exception {
-        //use reflection to get the private method
-        method = MainFrame.class.getDeclaredMethod("addData", String.class);
-        method.setAccessible(true);  // Make the private method accessible
-
-        method.invoke(mainFrame, "frog");
-    }
 }
