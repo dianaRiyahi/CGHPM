@@ -1,4 +1,5 @@
-package org.example; 
+
+package org.example;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 
 public class MainFrame extends JFrame {
 
@@ -31,7 +34,7 @@ public class MainFrame extends JFrame {
 
     private void initComponents() {
         setTitle("Canadian Wildlife");
-        setSize(1250, 750);
+        setSize(1250, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         getContentPane().setBackground(Color.WHITE);
@@ -89,10 +92,17 @@ public class MainFrame extends JFrame {
         // Right Sidebar (Search Results Panel)
         rightSidebar = new JPanel();
         rightSidebar.setLayout(new BoxLayout(rightSidebar, BoxLayout.Y_AXIS)); // Vertical layout
-        rightSidebar.setBackground(new Color(245, 245, 245)); // Light gray background
+        rightSidebar.setBackground(new Color(197, 199, 204)); // Light gray background
         rightSidebar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Padding
         rightSidebar.setPreferredSize(new Dimension(250, getHeight())); // Fixed width
-        add(rightSidebar, BorderLayout.EAST); // Add to the right side of the frame
+
+// Add a placeholder label for search results
+        JLabel searchPlaceholder = new JLabel("Search results will appear here.", SwingConstants.CENTER);
+        searchPlaceholder.setFont(new Font("Arial", Font.ITALIC, 14));
+        searchPlaceholder.setForeground(Color.DARK_GRAY);
+        rightSidebar.add(searchPlaceholder);
+
+        add(rightSidebar, BorderLayout.EAST);
 
 
         // Sidebar (Sleek Dark Gray)
@@ -114,15 +124,40 @@ public class MainFrame extends JFrame {
         updateSidebarButtons(false);
 
         // Map Panel
-        mapPanel = new JPanel(new BorderLayout());
-        mapLabel = new JLabel("", SwingConstants.CENTER);
+        mapPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                // Load the image
+                ImageIcon mapIcon = new ImageIcon("src/main/resources/homepage_banner.jpg");
+                Image image = mapIcon.getImage();
+
+                // Draw the image to fit the panel dynamically
+                g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        mapPanel.setLayout(new BorderLayout());
+
+        add(mapPanel, BorderLayout.CENTER);
+
+        // Load Image
+        ImageIcon mapIcon = new ImageIcon("src\\main\\resources\\homepage_banner.jpg");
+        Image scaledImage = mapIcon.getImage().getScaledInstance(800, 600, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(scaledImage);
+
+        // Add Image to JLabel
+        mapLabel = new JLabel(scaledIcon, SwingConstants.CENTER);
+
+        // Layered Pane
         layeredPane = new JLayeredPane();
         layeredPane.setLayout(null);
         mapLabel.setBounds(0, 0, 800, 600);
         layeredPane.add(mapLabel, Integer.valueOf(0));
+
         mapPanel.add(layeredPane, BorderLayout.CENTER);
-        mapPanel.setBackground(Color.lightGray);
         add(mapPanel, BorderLayout.CENTER);
+
 
         setVisible(true);
     }
@@ -150,8 +185,11 @@ public class MainFrame extends JFrame {
     }
 
     private void openRestrictedHuntingFrame() {
-        JFrame restrictedHuntingFrame = new JFrame("Articles");
-        restrictedHuntingFrame.setSize(800, 300);
+        JFrame restrictedHuntingFrame = new JFrame("Hunting Periods and Limits");
+        restrictedHuntingFrame.setSize(850, 330);
+        restrictedHuntingFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        restrictedHuntingFrame.setLocationRelativeTo(null); // Center the window
+        restrictedHuntingFrame.setResizable(false);
 
         String[] columns = {"Species", "Season", "Quantity", "Limit Period"};
         Object[][] data = {
@@ -167,12 +205,36 @@ public class MainFrame extends JFrame {
                 {"Harlequin Duck", "October 20 - January 10", "1", "Day"}
         };
 
+        // Create table
         JTable table = new JTable(data, columns);
-        restrictedHuntingFrame.add(new JScrollPane(table));
-        restrictedHuntingFrame.setTitle("Hunting Periods and Limits");
-        restrictedHuntingFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        table.setFont(new Font("Arial", Font.PLAIN, 14));
+        table.setRowHeight(25);
+        table.setGridColor(Color.GRAY);
+        table.setBackground(new Color(40, 40, 40));
+        table.setForeground(Color.WHITE);
+
+
+        // Center-align table content
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        // Customize table header
+        JTableHeader header = table.getTableHeader();
+        header.setFont(new Font("Arial", Font.BOLD, 14));
+        header.setBackground(new Color(25, 25, 25));
+        header.setForeground(Color.WHITE);
+
+        // Add table to scroll pane
+        JScrollPane scrollPane = new JScrollPane(table);
+        restrictedHuntingFrame.add(scrollPane);
+
+        // Show frame
         restrictedHuntingFrame.setVisible(true);
     }
+
 
     private void openWebpage(String url) {
         try {
@@ -181,6 +243,7 @@ public class MainFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Failed to open the link!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     public JButton createStyledButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.BOLD, 12));
@@ -441,19 +504,19 @@ public class MainFrame extends JFrame {
         mapLabel.setBounds(x, y, mapLabel.getIcon().getIconWidth(), mapLabel.getIcon().getIconHeight());
 
         // Add province buttons
-        addProvinceButton("Ontario", 410, 435);
-        addProvinceButton("Quebec", 510, 370);
-        addProvinceButton("Nova Scotia", 635, 450);
-        addProvinceButton("New Brunswick", 610, 435);
-        addProvinceButton("Manitoba", 320, 400);
-        addProvinceButton("Saskatchewan", 260, 410);
-        addProvinceButton("Alberta", 200, 390);
-        addProvinceButton("British Columbia", 120, 370);
-        addProvinceButton("Yukon", 110, 240);
-        addProvinceButton("Prince Edward Island", 630, 420);
-        addProvinceButton("Newfoundland and Labrador", 590, 340);
-        addProvinceButton("Northwest Territories", 190, 260);
-        addProvinceButton("Nunavut", 315, 270);
+        addProvinceButton("Ontario", 410, 405);
+        addProvinceButton("Quebec", 510, 340);
+        addProvinceButton("Nova Scotia", 635, 420);
+        addProvinceButton("New Brunswick", 610, 405);
+        addProvinceButton("Manitoba", 320, 370);
+        addProvinceButton("Saskatchewan", 260, 380);
+        addProvinceButton("Alberta", 200, 360);
+        addProvinceButton("British Columbia", 120, 340);
+        addProvinceButton("Yukon", 110, 210);
+        addProvinceButton("Prince Edward Island", 630, 390);
+        addProvinceButton("Newfoundland and Labrador", 590, 310);
+        addProvinceButton("Northwest Territories", 190, 230);
+        addProvinceButton("Nunavut", 315, 240);
 
         JLabel instructionLabel = new JLabel("<html><b>Click on the Green Flags to View Animals of That Province \uD83D\uDEA9.</b></html>");
         instructionLabel.setOpaque(true);
