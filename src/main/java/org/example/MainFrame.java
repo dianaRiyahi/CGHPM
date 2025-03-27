@@ -16,11 +16,9 @@ import javax.swing.table.JTableHeader;
 
 public class MainFrame extends JFrame {
 
-    public JLabel titleLabel;
     private JPanel statusPanel, mapPanel;
     private JButton viewMapButton;
     private JButton loginButton;
-    private JButton searchBar;
     private JLayeredPane layeredPane;
     private JLabel mapLabel;
     private String savedUsername = null; // Store the username temporarily
@@ -45,22 +43,30 @@ public class MainFrame extends JFrame {
         topPanel.setBackground(new Color(32, 33, 34));
         topPanel.setPreferredSize(new Dimension(getWidth(), 70)); // Fixed height for the header
 
-        // Title Label (Smaller Font)
-        JLabel titleLabel = new JLabel("Wildlife Information Portal", SwingConstants.LEFT);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20)); // Reduced font size
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0)); // Left padding
-        topPanel.add(titleLabel, BorderLayout.WEST);
+        JLabel wildlifePortalLabel = new JLabel("Wildlife Information Portal", SwingConstants.CENTER);
+        wildlifePortalLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        wildlifePortalLabel.setForeground(Color.WHITE);
+        wildlifePortalLabel.setBorder(BorderFactory.createEmptyBorder(20, 230, 20, 20)); // Padding
 
-        // Search Bar in the Top Panel
+        // Create a panel with the same width as the map panel and center the label
+        JPanel labelPanel = new JPanel(new BorderLayout());
+        labelPanel.setOpaque(false);
+
+        labelPanel.setPreferredSize(new Dimension(100, 70));
+        labelPanel.add(wildlifePortalLabel);
+
+        // Add the label panel to the top panel
+        topPanel.add(labelPanel, BorderLayout.CENTER);
+
+        // Search Bar Panel (aligned to the right side panel)
         JPanel searchBarPanel = new JPanel(new BorderLayout());
         searchBarPanel.setBackground(new Color(32, 33, 34)); // Match the header color
-        searchBarPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Padding
+        searchBarPanel.setBorder(BorderFactory.createEmptyBorder(20, 60, 20, 10));
 
         // Search Text Field
         searchField = new JTextField();
         searchField.setFont(new Font("Arial", Font.PLAIN, 14));
-        searchField.setPreferredSize(new Dimension(400, 30)); // Set preferred size
+        searchField.setPreferredSize(new Dimension(170, 30));  // Width is constrained to the right panel's width
         searchField.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 
         // Search Button
@@ -79,24 +85,24 @@ public class MainFrame extends JFrame {
             }
         });
 
-        // Add components to the search bar panel
+        // Add search components to the search bar panel
         searchBarPanel.add(searchField, BorderLayout.CENTER);
         searchBarPanel.add(searchButton, BorderLayout.EAST);
 
-        // Add the search bar panel to the top panel
-        topPanel.add(searchBarPanel, BorderLayout.CENTER);
+        // Add the search bar panel to the top panel, aligning it to the east (right)
+        topPanel.add(searchBarPanel, BorderLayout.EAST);
 
         // Add the top panel to the frame
         add(topPanel, BorderLayout.NORTH);
 
         // Right Sidebar (Search Results Panel)
         rightSidebar = new JPanel();
-        rightSidebar.setLayout(new BoxLayout(rightSidebar, BoxLayout.Y_AXIS)); // Vertical layout
-        rightSidebar.setBackground(new Color(197, 199, 204)); // Light gray background
+        rightSidebar.setLayout(new BoxLayout(rightSidebar, BoxLayout.Y_AXIS));
+        rightSidebar.setBackground(new Color(222, 224, 227));
         rightSidebar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Padding
-        rightSidebar.setPreferredSize(new Dimension(250, getHeight())); // Fixed width
+        rightSidebar.setPreferredSize(new Dimension(240, getHeight())); // Fixed width
 
-// Add a placeholder label for search results
+        // Add a placeholder label for search results
         JLabel searchPlaceholder = new JLabel("Search results will appear here.", SwingConstants.CENTER);
         searchPlaceholder.setFont(new Font("Arial", Font.ITALIC, 14));
         searchPlaceholder.setForeground(Color.DARK_GRAY);
@@ -104,13 +110,12 @@ public class MainFrame extends JFrame {
 
         add(rightSidebar, BorderLayout.EAST);
 
-
         // Sidebar (Sleek Dark Gray)
         statusPanel = new JPanel();
         statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS)); // Vertical layout
-        statusPanel.setBackground(new Color(45, 45, 45)); // Modern Dark Gray
+        statusPanel.setBackground(new Color(45, 45, 45));
         statusPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Padding
-        statusPanel.setPreferredSize(new Dimension(220, getHeight() - 70)); // Adjust height to account for header
+        statusPanel.setPreferredSize(new Dimension(200, getHeight() - 70)); // Adjust height to account for header
         add(statusPanel, BorderLayout.WEST);
 
         // Initially only "View Map" and "Log In" buttons
@@ -143,7 +148,7 @@ public class MainFrame extends JFrame {
 
         // Load Image
         ImageIcon mapIcon = new ImageIcon("src\\main\\resources\\homepage_banner.jpg");
-        Image scaledImage = mapIcon.getImage().getScaledInstance(800, 600, Image.SCALE_SMOOTH);
+        Image scaledImage = mapIcon.getImage().getScaledInstance(830, 600, Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
 
         // Add Image to JLabel
@@ -157,7 +162,6 @@ public class MainFrame extends JFrame {
 
         mapPanel.add(layeredPane, BorderLayout.CENTER);
         add(mapPanel, BorderLayout.CENTER);
-
 
         setVisible(true);
     }
@@ -504,19 +508,19 @@ public class MainFrame extends JFrame {
         mapLabel.setBounds(x, y, mapLabel.getIcon().getIconWidth(), mapLabel.getIcon().getIconHeight());
 
         // Add province buttons
-        addProvinceButton("Ontario", 410, 405);
-        addProvinceButton("Quebec", 510, 340);
-        addProvinceButton("Nova Scotia", 635, 420);
-        addProvinceButton("New Brunswick", 610, 405);
-        addProvinceButton("Manitoba", 320, 370);
-        addProvinceButton("Saskatchewan", 260, 380);
+        addProvinceButton("Ontario", 430, 405);
+        addProvinceButton("Quebec", 520, 340);
+        addProvinceButton("Nova Scotia", 655, 420);
+        addProvinceButton("New Brunswick", 630, 405);
+        addProvinceButton("Manitoba", 330, 370);
+        addProvinceButton("Saskatchewan", 270, 380);
         addProvinceButton("Alberta", 200, 360);
         addProvinceButton("British Columbia", 120, 340);
         addProvinceButton("Yukon", 110, 210);
-        addProvinceButton("Prince Edward Island", 630, 390);
-        addProvinceButton("Newfoundland and Labrador", 590, 310);
+        addProvinceButton("Prince Edward Island", 650, 390);
+        addProvinceButton("Newfoundland and Labrador", 610, 310);
         addProvinceButton("Northwest Territories", 190, 230);
-        addProvinceButton("Nunavut", 315, 240);
+        addProvinceButton("Nunavut", 325, 240);
 
         JLabel instructionLabel = new JLabel("<html><b>Click on the Green Flags to View Animals of That Province \uD83D\uDEA9.</b></html>");
         instructionLabel.setOpaque(true);
