@@ -3,14 +3,15 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 
@@ -168,8 +169,24 @@ public class MainFrame extends JFrame {
 
     private void openArticlesFrame() {
         JFrame articlesFrame = new JFrame("Articles");
-        articlesFrame.setSize(600, 400);
-        articlesFrame.setLayout(new GridLayout(5, 1));
+        articlesFrame.setSize(600, 450);
+        articlesFrame.setLocationRelativeTo(null);  // Center the frame
+
+        // Main panel with background color and padding
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(new Color(182, 179, 179));
+
+        // Introductory label
+        JLabel introLabel = new JLabel("Explore the articles below by clicking on the title to get started.", JLabel.CENTER);
+        introLabel.setFont(new Font("Arial", Font.ITALIC, 16));
+        introLabel.setForeground(new Color(50, 50, 50));
+        introLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Article panel with grid layout
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(0, 1, 10, 10));  // Flexible layout with spacing
+        panel.setBackground(new Color(182, 179, 179));  // Light grey background
+        panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));  // Add padding
 
         String[][] articles = {
                 {"Climate Change & Wildlife", "https://www.wwf.org"},
@@ -181,10 +198,38 @@ public class MainFrame extends JFrame {
 
         for (String[] article : articles) {
             JButton linkButton = new JButton(article[0]);
+
+            // Button styling
+            linkButton.setFont(new Font("Arial", Font.BOLD, 14));
+            linkButton.setBackground(new Color(95, 96, 97));  // Dark grey
+            linkButton.setForeground(Color.WHITE);
+            linkButton.setFocusPainted(false);
+            linkButton.setBorder(BorderFactory.createRaisedBevelBorder());
+
+            // Hover effect
+            linkButton.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    linkButton.setBackground(new Color(65, 66, 67));  // Darker grey on hover
+                }
+
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    linkButton.setBackground(new Color(81, 81, 81));  // Original color
+                }
+            });
+
+            // Open webpage action
             linkButton.addActionListener(e -> openWebpage(article[1]));
-            articlesFrame.add(linkButton);
+            panel.add(linkButton);
         }
 
+        JScrollPane scrollPane = new JScrollPane(panel);  // Add scrolling support
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        // Add components to the main panel
+        mainPanel.add(introLabel, BorderLayout.NORTH);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+        articlesFrame.add(mainPanel);
         articlesFrame.setVisible(true);
     }
 
@@ -238,7 +283,6 @@ public class MainFrame extends JFrame {
         // Show frame
         restrictedHuntingFrame.setVisible(true);
     }
-
 
     private void openWebpage(String url) {
         try {
@@ -314,7 +358,8 @@ public class MainFrame extends JFrame {
                     "Saved Endangered List",
                     "Restricted Hunting",
                     "Animal Facts",
-                    "Emergency Contact"
+                    "Emergency Contact",
+                    "View Map"
             };
 
             for (String label : loggedInLabels) {
@@ -327,6 +372,12 @@ public class MainFrame extends JFrame {
                 }
                 else if (label.equals("Restricted Hunting")) {
                     button.addActionListener(e -> openRestrictedHuntingFrame());
+                }
+                else if (label.equals("Animal Facts")) {
+                    button.addActionListener(e -> openAnimalFactsFrame());
+                }
+                else if (label.equals("View Map")){
+                    button.addActionListener(e -> loadMap());
                 }
 
                 statusPanel.add(button);
@@ -354,6 +405,99 @@ public class MainFrame extends JFrame {
 
         statusPanel.revalidate();
         statusPanel.repaint();
+    }
+
+    private void openAnimalFactsFrame() {
+        // Create a new frame with a list of animals
+        JFrame animalFrame = new JFrame("Animal Facts");
+        animalFrame.setSize(400, 500);  // Increased size to better fit all buttons
+        animalFrame.setLocationRelativeTo(null);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(0, 2, 10, 10)); // Using GridLayout for a cleaner layout with two columns
+        panel.setBackground(new Color(83, 83, 83));
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Array of animals and their facts
+        String[] animals = {
+                "Moose", "Beaver", "Eastern Wolf", "Common Loon", "Blanding's Turtle", "Canada Lynx", "Atlantic Puffin",
+                "Grizzly Bear", "Snowy Owl", "Peregrine Falcon", "Red Fox", "White-tailed Deer", "Northern Cardinal",
+                "Black Bear", "Great Blue Heron", "Wild Turkey", "Eastern Chipmunk", "Cougar"
+        };
+
+        // Create buttons for each animal and add to panel
+        for (String animal : animals) {
+            JButton animalButton = createStyledButton(animal);
+            animalButton.addActionListener(e -> animalFactActionPerformed(e));
+            panel.add(animalButton);
+        }
+
+        // ScrollPane to handle overflow in case there are too many buttons
+        JScrollPane scrollPane = new JScrollPane(panel);
+        animalFrame.add(scrollPane);
+
+        animalFrame.setVisible(true);
+    }
+
+    private void animalFactActionPerformed(ActionEvent e) {
+        JButton sourceButton = (JButton) e.getSource();
+        String animalName = sourceButton.getText(); // Get the name of the clicked animal
+
+        String animalFact = getAnimalFact(animalName);
+
+        // Create a new frame for displaying the fact
+        JFrame factFrame = new JFrame("Animal Fact");
+        factFrame.setSize(400, 250);
+        factFrame.setLocationRelativeTo(null);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.setBackground(new Color(197, 196, 196));
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        JLabel factLabel = new JLabel("<html><div style='text-align: center;'>" + animalFact + "</div></html>");
+        factLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        factLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JButton closeButton = new JButton("OK");
+        closeButton.setFont(new Font("Arial", Font.BOLD, 14));
+        closeButton.setBackground(new Color(95, 96, 97));
+        closeButton.setForeground(Color.WHITE);
+        closeButton.setFocusPainted(false);
+        closeButton.setBorder(BorderFactory.createRaisedBevelBorder());
+        closeButton.addActionListener(event -> factFrame.dispose());
+
+        panel.add(factLabel, BorderLayout.CENTER);
+        panel.add(closeButton, BorderLayout.SOUTH);
+
+        factFrame.add(panel);
+        factFrame.setVisible(true);
+    }
+
+    private String getAnimalFact(String animalName) {
+        Map<String, String> animalFacts = new HashMap<>();
+
+        animalFacts.put("Moose", "The moose is the largest member of the deer family, known for its massive size and distinctive antlers.");
+        animalFacts.put("Beaver", "Beavers are known for their incredible ability to build dams and lodges using their strong teeth.");
+        animalFacts.put("Eastern Wolf", "The Eastern wolf is a subspecies of the grey wolf, native to Ontario's forests.");
+        animalFacts.put("Common Loon", "Loons are known for their haunting calls and their ability to dive deep underwater.");
+        animalFacts.put("Blanding's Turtle", "This turtle has a yellow throat and a domed shell, making it a distinctive and protected species.");
+        animalFacts.put("Canada Lynx", "The Canada Lynx has large paws that help it walk on snow and thick fur to survive cold winters.");
+        animalFacts.put("Atlantic Puffin", "The Atlantic Puffin, often called the 'clown of the sea,' has a colorful beak and strong swimming skills.");
+        animalFacts.put("Grizzly Bear", "Grizzly bears are powerful predators, known for their strength and large size, and are often found in North American forests.");
+        animalFacts.put("Snowy Owl", "Snowy owls are large, white owls native to the Arctic, known for their striking appearance and exceptional hunting skills.");
+        animalFacts.put("Peregrine Falcon", "Peregrine falcons are the fastest birds in the world, capable of reaching speeds over 240 miles per hour in a dive.");
+        animalFacts.put("Red Fox", "Red foxes are highly adaptable animals with distinctive red fur, known for their cunning nature and intelligence.");
+        animalFacts.put("White-tailed Deer", "White-tailed deer are common in North America and are known for the white underside of their tails, which they flash as a warning sign.");
+        animalFacts.put("Northern Cardinal", "Northern cardinals are vibrant red songbirds, known for their bright color and melodious songs.");
+        animalFacts.put("Black Bear", "Black bears are the most common bear species in North America, typically smaller than their grizzly counterparts, but still formidable.");
+        animalFacts.put("Great Blue Heron", "The great blue heron is a large wading bird, known for its graceful flight and striking blue-gray plumage.");
+        animalFacts.put("Wild Turkey", "Wild turkeys are large birds native to North America, known for their impressive plumage and distinctive gobbling calls.");
+        animalFacts.put("Eastern Chipmunk", "Eastern chipmunks are small, striped squirrels found in forests, known for their ability to gather and store food.");
+        animalFacts.put("Cougar", "Cougars, also known as mountain lions or pumas, are large cats that roam the Americas and are skilled hunters and climbers.");
+
+
+        return animalFacts.getOrDefault(animalName, "Fact not available for this animal.");
     }
 
     private void logoutActionPerformed() {
