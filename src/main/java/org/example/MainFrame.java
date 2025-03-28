@@ -124,6 +124,7 @@ public class MainFrame extends JFrame {
         loginButton = createStyledButton("Log In");
 
         loginButton.addActionListener(evt -> loginActionPerformed());
+        assert viewMapButton != null;
         viewMapButton.addActionListener(evt -> loadMap());
 
         // Add buttons to sidebar
@@ -201,7 +202,7 @@ public class MainFrame extends JFrame {
 
             // Button styling
             linkButton.setFont(new Font("Arial", Font.BOLD, 14));
-            linkButton.setBackground(new Color(95, 96, 97));  // Dark grey
+            linkButton.setBackground(new Color(81, 81, 81));  // Dark grey
             linkButton.setForeground(Color.WHITE);
             linkButton.setFocusPainted(false);
             linkButton.setBorder(BorderFactory.createRaisedBevelBorder());
@@ -367,17 +368,11 @@ public class MainFrame extends JFrame {
                 button.setMaximumSize(new Dimension(sidebarWidth, 40));
                 button.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-                if (label.equals("View Articles")) {
-                    button.addActionListener(e -> openArticlesFrame());
-                }
-                else if (label.equals("Restricted Hunting")) {
-                    button.addActionListener(e -> openRestrictedHuntingFrame());
-                }
-                else if (label.equals("Animal Facts")) {
-                    button.addActionListener(e -> openAnimalFactsFrame());
-                }
-                else if (label.equals("View Map")){
-                    button.addActionListener(e -> loadMap());
+                switch (label) {
+                    case "View Articles" -> button.addActionListener(e -> openArticlesFrame());
+                    case "Restricted Hunting" -> button.addActionListener(e -> openRestrictedHuntingFrame());
+                    case "Animal Facts" -> button.addActionListener(e -> openAnimalFactsFrame());
+                    case "View Map" -> button.addActionListener(e -> loadMap());
                 }
 
                 statusPanel.add(button);
@@ -428,7 +423,7 @@ public class MainFrame extends JFrame {
         // Create buttons for each animal and add to panel
         for (String animal : animals) {
             JButton animalButton = createStyledButton(animal);
-            animalButton.addActionListener(e -> animalFactActionPerformed(e));
+            animalButton.addActionListener(this::animalFactActionPerformed);
             panel.add(animalButton);
         }
 
@@ -550,7 +545,7 @@ public class MainFrame extends JFrame {
 
         return animalNames;
     }
-    private List<String> displaySearchResults(String searchQuery) {
+    private void displaySearchResults(String searchQuery) {
         // Clear the existing content in the right sidebar
         rightSidebar.removeAll();
         rightSidebar.revalidate();
@@ -604,7 +599,6 @@ public class MainFrame extends JFrame {
         rightSidebar.revalidate();
         rightSidebar.repaint();
 
-        return results; // Return results for further processing
     }
 
     private void handleSearchResultSelection(String selectedItem) {
@@ -724,7 +718,6 @@ public class MainFrame extends JFrame {
         layeredPane.revalidate();
         layeredPane.repaint();
     }
-
 
     private void showOntarioAnimals() {
         JFrame ontarioFrame = new JFrame("Top 5 Native Animals in Ontario");
@@ -1404,7 +1397,6 @@ public class MainFrame extends JFrame {
 
         NewfoundlandFrame.setVisible(true);
     }
-
     /**
      * Displays a window showcasing the top 5 native animals in Nunavut.
      * Each animal is shown with an image, a short description, and a hover effect.
@@ -1483,7 +1475,7 @@ public class MainFrame extends JFrame {
         nunavutFrame.add(scrollPane, BorderLayout.CENTER);
         nunavutFrame.add(animalsPanel, BorderLayout.CENTER);
 
-
+        nunavutFrame.setLocationRelativeTo(null);
         nunavutFrame.setVisible(true);
     }
     /**
