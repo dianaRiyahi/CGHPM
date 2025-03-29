@@ -15,6 +15,8 @@ import java.util.List;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 
+import static org.example.dataReader.getConservationStatuses;
+
 public class MainFrame extends JFrame {
 
     private JPanel statusPanel, mapPanel;
@@ -234,6 +236,77 @@ public class MainFrame extends JFrame {
         articlesFrame.setVisible(true);
     }
 
+    private void openConservationStatusFrame() {
+        JFrame restrictedHuntingFrame = new JFrame("Hunting Periods and Limits");
+        restrictedHuntingFrame.setSize(850, 330);
+        restrictedHuntingFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        restrictedHuntingFrame.setLocationRelativeTo(null); // Center the window
+        restrictedHuntingFrame.setResizable(false);
+
+        List<String[]> conservationStatuses = getConservationStatuses();
+
+        Map<String, List<String>> sortedAnimalsByStatus = new HashMap<>();
+
+        // convert a list of animals and their conservation statuses to a map of conservation statuses
+        // and animals that belong to that status
+        for (String[] entry : conservationStatuses) {
+            String animal = entry[0];
+            String status = entry[1];
+
+            sortedAnimalsByStatus.putIfAbsent(status, new ArrayList<>());
+            sortedAnimalsByStatus.get(status).add(animal);
+        }
+
+        // get sizes of each category
+        int numLeastConcern = sortedAnimalsByStatus.get("Least Concern").size();
+        int numNearThreatened = sortedAnimalsByStatus.get("Near Threatened").size();
+        int numVulnerable = sortedAnimalsByStatus.get("Vulnerable").size();
+        int numEndangered = sortedAnimalsByStatus.get("Endangered").size();
+
+        int maxSize = Math.max(Math.max(numLeastConcern, numNearThreatened),
+                Math.max(numVulnerable, numEndangered));
+
+        Object[][] data = new Object[maxSize][4];
+
+        // convert map to 2d array that can be displayed by JTable
+        for (int i = 0; i < maxSize; i++) {
+            data[i][0] = (i < numLeastConcern) ? sortedAnimalsByStatus.get("Least Concern").get(i) : "";
+            data[i][1] = (i < numNearThreatened) ? sortedAnimalsByStatus.get("Near Threatened").get(i) : "";
+            data[i][2] = (i < numVulnerable) ? sortedAnimalsByStatus.get("Vulnerable").get(i) : "";
+            data[i][3] = (i < numEndangered) ? sortedAnimalsByStatus.get("Endangered").get(i) : "";
+        }
+
+        String[] columns = {"Least Concern", "Near Threatened", "Vulnerable", "Endangered"};
+
+        // Create table
+        JTable table = new JTable(data, columns);
+        table.setFont(new Font("Arial", Font.PLAIN, 14));
+        table.setRowHeight(25);
+        table.setGridColor(Color.GRAY);
+        table.setBackground(new Color(40, 40, 40));
+        table.setForeground(Color.WHITE);
+
+        // Center-align table content
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        // Customize table header
+        JTableHeader header = table.getTableHeader();
+        header.setFont(new Font("Arial", Font.BOLD, 14));
+        header.setBackground(new Color(25, 25, 25));
+        header.setForeground(Color.WHITE);
+
+        // Add table to scroll pane
+        JScrollPane scrollPane = new JScrollPane(table);
+        restrictedHuntingFrame.add(scrollPane);
+
+        // Show frame
+        restrictedHuntingFrame.setVisible(true);
+    }
+
     private void openRestrictedHuntingFrame() {
         JFrame restrictedHuntingFrame = new JFrame("Hunting Periods and Limits");
         restrictedHuntingFrame.setSize(850, 330);
@@ -356,7 +429,7 @@ public class MainFrame extends JFrame {
             String[] loggedInLabels = {
                     "Subscribe to Newsletter",
                     "View Articles",
-                    "Saved Endangered List",
+                    "Conservation Statuses",
                     "Restricted Hunting",
                     "Animal Facts",
                     "Emergency Contact",
@@ -370,6 +443,7 @@ public class MainFrame extends JFrame {
 
                 switch (label) {
                     case "View Articles" -> button.addActionListener(e -> openArticlesFrame());
+                    case "Conservation Statuses" -> button.addActionListener(e -> openConservationStatusFrame());
                     case "Restricted Hunting" -> button.addActionListener(e -> openRestrictedHuntingFrame());
                     case "Animal Facts" -> button.addActionListener(e -> openAnimalFactsFrame());
                     case "View Map" -> button.addActionListener(e -> loadMap());
