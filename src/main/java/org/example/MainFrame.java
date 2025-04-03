@@ -1,16 +1,17 @@
 
 package org.example;
 
+import com.opencsv.CSVWriter;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.*;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.List;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
@@ -27,6 +28,11 @@ public class MainFrame extends JFrame {
     private String savedUsername = null; // Store the username temporarily
     private JTextField searchField;
     private JPanel rightSidebar; // Panel for search results
+    private static final String USER_DATA_FILE = "src/main/resources/users.csv";
+    private String currentUsername = null;
+
+
+
 
 
     public MainFrame() {
@@ -474,6 +480,7 @@ public class MainFrame extends JFrame {
 
         statusPanel.revalidate();
         statusPanel.repaint();
+
     }
 
     private void openAnimalFactsFrame() {
@@ -570,33 +577,160 @@ public class MainFrame extends JFrame {
     }
 
     private void logoutActionPerformed() {
-        savedUsername = null;
-        JOptionPane.showMessageDialog(this, "You have been logged out.", "Log Out", JOptionPane.INFORMATION_MESSAGE);
+        currentUsername = null;
+        JOptionPane.showMessageDialog(this,
+                "You have logged out.",
+                "Log Out", JOptionPane.INFORMATION_MESSAGE);
         updateSidebarButtons(false);
     }
     // Sign In Functionality (Store the username temporarily)
     private void signInActionPerformed() {
+        JPanel panel = new JPanel(new GridLayout(3,2));
         JTextField usernameField = new JTextField();
+        JPasswordField passwordField = new JPasswordField();
 
-        Object[] message = {"Username:", usernameField};
+        panel.add(new JLabel("Username"));
+        panel.add(usernameField);
+        panel.add(new JLabel("Password"));
+        panel.add(passwordField);
+        panel.add(new JLabel(""));
+        panel.add(new JLabel(""));
 
-        int option = JOptionPane.showConfirmDialog(this, message, "Sign In", JOptionPane.OK_CANCEL_OPTION);
+
+
+        int option = JOptionPane.showConfirmDialog(this, panel, "Sign In", JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
 
         if (option == JOptionPane.OK_OPTION) {
-            savedUsername = usernameField.getText().trim();
-            JOptionPane.showMessageDialog(this, "Signed in as: " + savedUsername, "Sign In", JOptionPane.INFORMATION_MESSAGE);
+            String username = usernameField.getText().trim();
+            String password = new String(passwordField.getPassword());
+            if(username.isEmpty() || password.isEmpty()){
+                JOptionPane.showMessageDialog(this,"Username and password cannot be empty!", "Sign In Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if(userExists(username)){
+                JOptionPane.showMessageDialog(this,
+                        "Username already exists!",
+                        "Sign In Error", JOptionPane.ERROR_MESSAGE);
+                return;
+
+            }
+            if(registerUser(username,password)){
+                currentUsername = username;
+                JOptionPane.showMessageDialog(this,
+                        "Account created successfully!",
+                        "Sign In", JOptionPane.INFORMATION_MESSAGE);
+                updateSidebarButtons(true);
+            }else{
+                JOptionPane.showMessageDialog(this,
+                        "Failed to create account. Please try again.",
+                        "Sign In Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
     // Login Functionality
     private void loginActionPerformed() {
-        if (savedUsername == null || savedUsername.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "You must sign in first!", "Login Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+       JPanel panel = new JPanel(new GridLayout(3,2));
+       JTextField usernameField= new JTextField();
+       JPasswordField passwordField = new JPasswordField();
 
-        // Update Sidebar After Login
-        updateSidebarButtons(true);
+       panel.add(new JLabel("Username"));
+       panel.add(usernameField);
+       panel.add(new JLabel("Password"));
+       panel.add(passwordField);
+       panel.add(new JLabel(""));
+       panel.add(new JLabel(""));
+
+       int option = JOptionPane.showConfirmDialog(this, panel, "Log In ", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+       if(option == JOptionPane.OK_OPTION){
+           String username = usernameField.getText().trim();
+           String password = new String(passwordField.getPassword());
+
+           if(username.isEmpty() || password.isEmpty()){
+               JOptionPane.showMessageDialog(this,
+                       "Username and password cannot be empty!",
+                       "Login Error", JOptionPane.ERROR_MESSAGE);
+               return;
+           }
+           if(authenticateUser(username, password)){
+               currentUsername = username;
+               JOptionPane.showMessageDialog(this,
+                       "Welcome back " + username + "!",
+                       "Login Successful", JOptionPane.INFORMATION_MESSAGE);
+               updateSidebarButtons(true);
+           }else{
+               JOptionPane.showMessageDialog(this,
+                       "Invalid username or password!",
+                       "Login Error", JOptionPane.ERROR_MESSAGE);
+           }
+       }
+
+    }
+    private boolean userExists(String username) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(USER_DATA_FILE))) {
+            // Skip header line
+            reader.readLine();
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length >= 1 && parts[0].equalsIgnoreCase(username)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error accessing user database",
+                    "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return false;
+    }
+    private boolean authenticateUser(String username, String password) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(USER_DATA_FILE))) {
+            // Skip header line
+            reader.readLine();
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length >= 2 &&
+                        parts[0].equalsIgnoreCase(username) &&
+                        parts[1].equals(password)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error accessing user database",
+                    "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return false;
+    }
+    private boolean registerUser(String username, String password) {
+        try {
+            // Check if username already exists
+            if (userExists(username)) {
+                JOptionPane.showMessageDialog(this,
+                        "Username already exists!",
+                        "Registration Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+
+            // Append new user to file
+            try (FileWriter writer = new FileWriter(USER_DATA_FILE, true);
+                 BufferedWriter bw = new BufferedWriter(writer);
+                 PrintWriter out = new PrintWriter(bw)) {
+
+                out.println(username + "," + password);
+                return true;
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error creating account: " + e.getMessage(),
+                    "Registration Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
     private List<String> loadAnimalNames() {
         List<String> animalNames = new ArrayList<>();
@@ -1815,8 +1949,62 @@ public class MainFrame extends JFrame {
         return graphPanel;
     }
 
+    private static void initializeUserDataFile() {
+        try {
+            File userFile = new File(USER_DATA_FILE);
+
+            // Create parent directories if they don't exist
+            userFile.getParentFile().mkdirs();
+
+            // Check if file exists
+            if (!userFile.exists()) {
+                // Create new file with headers
+                try (FileWriter writer = new FileWriter(userFile)) {
+                    writer.write("username,password\n");
+                }
+            } else {
+                // Verify if headers exist without overwriting
+                boolean hasHeaders = false;
+                try (BufferedReader reader = new BufferedReader(new FileReader(userFile))) {
+                    String firstLine = reader.readLine();
+                    hasHeaders = firstLine != null && firstLine.equals("username,password");
+                }
+
+                // Add headers if missing (without losing data)
+                if (!hasHeaders) {
+                    // Read existing content
+                    List<String> lines = Files.readAllLines(userFile.toPath());
+
+                    // Write back with headers
+                    try (FileWriter writer = new FileWriter(userFile)) {
+                        writer.write("username,password\n");
+                        for (String line : lines) {
+                            writer.write(line + "\n");
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null,
+                    "Error initializing user database:\n" + e.getMessage(),
+                    "Initialization Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
+    }
+
+
 
     public static void main(String[] args) {
+        try{
+            java.nio.file.Path path = java.nio.file.Paths.get(USER_DATA_FILE);
+            if(!java.nio.file.Files.exists(path)){
+                java.nio.file.Files.createFile(path);
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        initializeUserDataFile();
+
         SwingUtilities.invokeLater(() -> {
             MainFrame mainFrame = new MainFrame(); // Create an instance of MainFrame
             mainFrame.setVisible(true); // Show the main frame
