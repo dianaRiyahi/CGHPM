@@ -83,4 +83,50 @@ public class MainFrameTest {
         assertTrue(results.contains("Province: Ontario"), "The result list does not contain Ontario");
         assertTrue(results.contains("Province: Yukon"), "The result list does not contain Yukon");
     }
+
+    @Test
+    public void testLoadAnimalNames() throws Exception {
+        //use reflection to get the private method
+        method = MainFrame.class.getDeclaredMethod("loadAnimalNames");
+        method.setAccessible(true);  // Make the private method accessible
+
+        List<String> animalNames = (List<String>) method.invoke(mainFrame);
+        assertEquals(65, animalNames.size());
+    }
+
+    @Test
+    public void testAnimalsPanelContent() {
+
+        //let jFrame load before testing
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = mainFrame.showNunavutAnimals();
+            JScrollPane animalsScrollPane = (JScrollPane) frame.getContentPane().getComponent(0);
+            JPanel animalsPanel = (JPanel) animalsScrollPane.getViewport().getView();
+
+            assertNotNull(animalsPanel, "animalsPanel is null");
+            assertEquals(5, animalsPanel.getComponentCount(), "animalsPanel does not contain 5 components");
+
+            JLabel firstLabel = (JLabel) animalsPanel.getComponent(1);  // The JLabel inside the first animal panel
+            assertEquals("Polar Bear", firstLabel.getText(), "First label does not contain Polar Bear");
+        });
+    }
+
+    @Test
+    public void testArticlesFrame() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        method = MainFrame.class.getDeclaredMethod("openArticlesFrame");
+        method.setAccessible(true);  // Make the private method accessible
+        JFrame frame = (JFrame) method.invoke(mainFrame);
+
+        SwingUtilities.invokeLater(() -> {
+            JScrollPane articlesScrollPane = (JScrollPane) frame.getContentPane().getComponent(0);
+            JPanel articlesPanel = (JPanel) articlesScrollPane.getViewport().getView();
+
+            assertNotNull(articlesPanel, "articlesPanel is null");
+            assertEquals(5, articlesPanel.getComponentCount(), "articlesPanel does not contain 5 components");
+
+            JLabel firstLabel = (JLabel) articlesPanel.getComponent(1);  // The JLabel inside the first animal panel
+            assertEquals("Climate Change & Wildlife", firstLabel.getText(), "First label does not contain 'Climate Change & Wildlife'");
+        });
+    }
+
 }

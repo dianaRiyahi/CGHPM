@@ -176,7 +176,7 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
-    private void openArticlesFrame() {
+    private JFrame openArticlesFrame() {
         JFrame articlesFrame = new JFrame("Articles");
         articlesFrame.setSize(600, 450);
         articlesFrame.setLocationRelativeTo(null);  // Center the frame
@@ -240,6 +240,8 @@ public class MainFrame extends JFrame {
 
         articlesFrame.add(mainPanel);
         articlesFrame.setVisible(true);
+
+        return articlesFrame;
     }
 
     private void openConservationStatusFrame() {
@@ -1610,7 +1612,7 @@ public class MainFrame extends JFrame {
      * Each animal is shown with an image, a short description, and a hover effect.
      * Clicking on an animal opens a detailed information window.
      */
-    public void showNunavutAnimals() {
+    public JFrame showNunavutAnimals() {
         JFrame nunavutFrame = new JFrame("Top 5 Native Animals in Nunavut");
         nunavutFrame.setSize(800, 750);
         nunavutFrame.setLayout(new BorderLayout());
@@ -1685,6 +1687,8 @@ public class MainFrame extends JFrame {
 
         nunavutFrame.setLocationRelativeTo(null);
         nunavutFrame.setVisible(true);
+
+        return nunavutFrame;
     }
     /**
      * Opens a detailed information window for a selected Nunavut animal.

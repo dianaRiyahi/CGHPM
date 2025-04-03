@@ -37,7 +37,7 @@ public class dataReader {
     }
 }
 
-class banana {
+class printStatuses {
     public static void main(String[] args) {
         System.out.println(dataReader.getConservationStatuses());
     }
