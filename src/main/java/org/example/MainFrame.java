@@ -29,6 +29,8 @@ public class MainFrame extends JFrame {
     private JTextField searchField;
     private JPanel rightSidebar; // Panel for search results
     private static final String USER_DATA_FILE = "src/main/resources/users.csv";
+
+    private static final String NEWSLETTER_SUBSCRIPTIONS_FILE = "src/main/resources/newsletter_subscriptions.csv";
     private String currentUsername = null;
 
 
@@ -174,6 +176,117 @@ public class MainFrame extends JFrame {
         add(mapPanel, BorderLayout.CENTER);
 
         setVisible(true);
+    }
+    private void openNewsletterSubscriptionForm() {
+        JFrame newsletterFrame = new JFrame("Subscribe to Newsletter");
+        newsletterFrame.setSize(500, 350);
+        newsletterFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        newsletterFrame.setLocationRelativeTo(null);
+
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        JPanel formPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+
+        // Form fields
+        JLabel nameLabel = new JLabel("Full Name:");
+        JTextField nameField = new JTextField();
+
+        JLabel emailLabel = new JLabel("Email:");
+        JTextField emailField = new JTextField();
+
+        JLabel interestsLabel = new JLabel("Interests:");
+        String[] interestOptions = {
+                "General Wildlife News",
+                "Conservation Updates",
+                "Animal Spotting Alerts",
+                "All Topics"
+        };
+        JComboBox<String> interestsCombo = new JComboBox<>(interestOptions);
+
+        // Add components to form
+        formPanel.add(nameLabel);
+        formPanel.add(nameField);
+        formPanel.add(emailLabel);
+        formPanel.add(emailField);
+        formPanel.add(interestsLabel);
+        formPanel.add(interestsCombo);
+
+        // Submit button
+        JButton subscribeButton = new JButton("Subscribe");
+        subscribeButton.setBackground(new Color(70, 130, 180));
+        subscribeButton.setForeground(Color.WHITE);
+        subscribeButton.addActionListener(e -> {
+            if (validateNewsletterForm(nameField, emailField)) {
+                if (saveNewsletterSubscription(
+                        nameField.getText(),
+                        emailField.getText(),
+                        (String) interestsCombo.getSelectedItem()
+                )) {
+                    JOptionPane.showMessageDialog(newsletterFrame,
+                            "Thank you for subscribing to our newsletter!",
+                            "Subscription Successful", JOptionPane.INFORMATION_MESSAGE);
+                    newsletterFrame.dispose();
+                }
+            }
+        });
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.add(subscribeButton);
+
+        mainPanel.add(new JLabel("<html><h2>Newsletter Subscription</h2></html>"), BorderLayout.NORTH);
+        mainPanel.add(formPanel, BorderLayout.CENTER);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        newsletterFrame.add(mainPanel);
+        newsletterFrame.setVisible(true);
+    }
+
+    private boolean validateNewsletterForm(JTextField nameField, JTextField emailField) {
+        if (nameField.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter your name", "Validation Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        String email = emailField.getText().trim();
+        if (email.isEmpty() || !email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid email address", "Validation Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean saveNewsletterSubscription(String name, String email, String interests) {
+        try {
+            File file = new File(NEWSLETTER_SUBSCRIPTIONS_FILE);
+            boolean fileExists = file.exists();
+
+            // Create parent directories if they don't exist
+            file.getParentFile().mkdirs();
+
+            try (CSVWriter writer = new CSVWriter(new FileWriter(file, true))) {
+                // Write header if file is new
+                if (!fileExists) {
+                    writer.writeNext(new String[]{"Timestamp", "Name", "Email", "Interests"});
+                }
+
+                // Write data
+                String[] data = {
+                        new java.util.Date().toString(),
+                        name,
+                        email,
+                        interests
+                };
+                writer.writeNext(data);
+                return true;
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error saving subscription: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
 
     private JFrame openArticlesFrame() {
@@ -431,7 +544,7 @@ public class MainFrame extends JFrame {
     private void updateSidebarButtons(boolean loggedIn) {
         statusPanel.removeAll();
 
-        int sidebarWidth = statusPanel.getPreferredSize().width; // Get sidebar width to apply to buttons
+        int sidebarWidth = statusPanel.getPreferredSize().width;
         if (loggedIn) {
             // Buttons to be shown after login
             String[] loggedInLabels = {
@@ -455,11 +568,13 @@ public class MainFrame extends JFrame {
                     case "Restricted Hunting" -> button.addActionListener(e -> openRestrictedHuntingFrame());
                     case "Animal Facts" -> button.addActionListener(e -> openAnimalFactsFrame());
                     case "Emergency Contact" -> button.addActionListener(e -> openContactInfo());
+                    case "Subscribe to Newsletter" -> button.addActionListener(e -> openNewsletterSubscriptionForm());
                     case "View Map" -> button.addActionListener(e -> loadMap());
                 }
 
                 statusPanel.add(button);
             }
+
             JButton logoutButton = createStyledButton("Log Out", new Color(45, 45, 45), Color.RED);
             logoutButton.setMaximumSize(new Dimension(sidebarWidth, 40));
             logoutButton.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -483,9 +598,7 @@ public class MainFrame extends JFrame {
 
         statusPanel.revalidate();
         statusPanel.repaint();
-
     }
-
     private void openAnimalFactsFrame() {
         // Create a new frame with a list of animals
         JFrame animalFrame = new JFrame("Animal Facts");
@@ -646,41 +759,41 @@ public class MainFrame extends JFrame {
 
     // Login Functionality
     private void loginActionPerformed() {
-       JPanel panel = new JPanel(new GridLayout(3,2));
-       JTextField usernameField= new JTextField();
-       JPasswordField passwordField = new JPasswordField();
+        JPanel panel = new JPanel(new GridLayout(3,2));
+        JTextField usernameField= new JTextField();
+        JPasswordField passwordField = new JPasswordField();
 
-       panel.add(new JLabel("Username"));
-       panel.add(usernameField);
-       panel.add(new JLabel("Password"));
-       panel.add(passwordField);
-       panel.add(new JLabel(""));
-       panel.add(new JLabel(""));
+        panel.add(new JLabel("Username"));
+        panel.add(usernameField);
+        panel.add(new JLabel("Password"));
+        panel.add(passwordField);
+        panel.add(new JLabel(""));
+        panel.add(new JLabel(""));
 
-       int option = JOptionPane.showConfirmDialog(this, panel, "Log In ", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int option = JOptionPane.showConfirmDialog(this, panel, "Log In ", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
-       if(option == JOptionPane.OK_OPTION){
-           String username = usernameField.getText().trim();
-           String password = new String(passwordField.getPassword());
+        if(option == JOptionPane.OK_OPTION){
+            String username = usernameField.getText().trim();
+            String password = new String(passwordField.getPassword());
 
-           if(username.isEmpty() || password.isEmpty()){
-               JOptionPane.showMessageDialog(this,
-                       "Username and password cannot be empty!",
-                       "Login Error", JOptionPane.ERROR_MESSAGE);
-               return;
-           }
-           if(authenticateUser(username, password)){
-               currentUsername = username;
-               JOptionPane.showMessageDialog(this,
-                       "Welcome back " + username + "!",
-                       "Login Successful", JOptionPane.INFORMATION_MESSAGE);
-               updateSidebarButtons(true);
-           }else{
-               JOptionPane.showMessageDialog(this,
-                       "Invalid username or password!",
-                       "Login Error", JOptionPane.ERROR_MESSAGE);
-           }
-       }
+            if(username.isEmpty() || password.isEmpty()){
+                JOptionPane.showMessageDialog(this,
+                        "Username and password cannot be empty!",
+                        "Login Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if(authenticateUser(username, password)){
+                currentUsername = username;
+                JOptionPane.showMessageDialog(this,
+                        "Welcome back " + username + "!",
+                        "Login Successful", JOptionPane.INFORMATION_MESSAGE);
+                updateSidebarButtons(true);
+            }else{
+                JOptionPane.showMessageDialog(this,
+                        "Invalid username or password!",
+                        "Login Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
 
     }
     private boolean userExists(String username) {
