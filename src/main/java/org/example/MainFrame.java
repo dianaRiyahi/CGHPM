@@ -454,6 +454,7 @@ public class MainFrame extends JFrame {
                     case "Conservation Statuses" -> button.addActionListener(e -> openConservationStatusFrame());
                     case "Restricted Hunting" -> button.addActionListener(e -> openRestrictedHuntingFrame());
                     case "Animal Facts" -> button.addActionListener(e -> openAnimalFactsFrame());
+                    case "Emergency Contact" -> button.addActionListener(e -> openContactInfo());
                     case "View Map" -> button.addActionListener(e -> loadMap());
                 }
 
@@ -469,7 +470,7 @@ public class MainFrame extends JFrame {
             loginButton.setAlignmentX(Component.LEFT_ALIGNMENT);
             statusPanel.add(loginButton);
 
-            JButton signInButton = createStyledButton("Sign In", new Color(45, 45, 45), Color.WHITE);
+            JButton signInButton = createStyledButton("Sign Up", new Color(45, 45, 45), Color.WHITE);
             signInButton.setMaximumSize(new Dimension(sidebarWidth, 40));
             signInButton.setAlignmentX(Component.LEFT_ALIGNMENT);
             signInButton.addActionListener(evt -> signInActionPerformed());
@@ -578,6 +579,19 @@ public class MainFrame extends JFrame {
         return animalFacts.getOrDefault(animalName, "Fact not available for this animal.");
     }
 
+    private void openContactInfo() {
+        JFrame contactInfoFrame = new JFrame("Emergency Contact Information");
+        JLabel contactInfoLabel = new JLabel("<html>Parks Canada Emergency Number:<br> 1-888-773-8888 <br><br> Canada General Inquiries number:<br> 1-866-677-7678 <br><br>Environment and Climate Change Canada:<br> 1-800-668-6767 </html> ", JLabel.CENTER);
+
+        contactInfoFrame.getContentPane().setBackground(new Color(83, 83, 83));
+        contactInfoLabel.setForeground(new Color(255, 255, 255));
+
+        contactInfoFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        contactInfoFrame.add(contactInfoLabel);
+        contactInfoFrame.setSize(300, 300);
+        contactInfoFrame.setVisible(true);
+    }
+
     private void logoutActionPerformed() {
         currentUsername = null;
         JOptionPane.showMessageDialog(this,
@@ -600,19 +614,19 @@ public class MainFrame extends JFrame {
 
 
 
-        int option = JOptionPane.showConfirmDialog(this, panel, "Sign In", JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
+        int option = JOptionPane.showConfirmDialog(this, panel, "Sign Up", JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE);
 
         if (option == JOptionPane.OK_OPTION) {
             String username = usernameField.getText().trim();
             String password = new String(passwordField.getPassword());
             if(username.isEmpty() || password.isEmpty()){
-                JOptionPane.showMessageDialog(this,"Username and password cannot be empty!", "Sign In Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,"Username and password cannot be empty!", "Sign Up Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             if(userExists(username)){
                 JOptionPane.showMessageDialog(this,
                         "Username already exists!",
-                        "Sign In Error", JOptionPane.ERROR_MESSAGE);
+                        "Sign Up Error", JOptionPane.ERROR_MESSAGE);
                 return;
 
             }
@@ -620,12 +634,12 @@ public class MainFrame extends JFrame {
                 currentUsername = username;
                 JOptionPane.showMessageDialog(this,
                         "Account created successfully!",
-                        "Sign In", JOptionPane.INFORMATION_MESSAGE);
+                        "Sign Up", JOptionPane.INFORMATION_MESSAGE);
                 updateSidebarButtons(true);
             }else{
                 JOptionPane.showMessageDialog(this,
                         "Failed to create account. Please try again.",
-                        "Sign In Error", JOptionPane.ERROR_MESSAGE);
+                        "Sign Up Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
