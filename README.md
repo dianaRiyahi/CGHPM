@@ -133,7 +133,7 @@ java -cp "out:lib/opencsv-x.x.jar" org.example.MainFrame
 ---
 
 # Demo 
-Here’s a demo video showcasing how our program looks and functions:
-
+Here’s a demo video showcasing how our program looks and function.
+You can download it from the link below by clicking on "View raw"
 ![demo](demo.mp4) 
 
