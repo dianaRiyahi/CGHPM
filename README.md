@@ -63,8 +63,8 @@ Curated wildlife articles addressing topics such as conservation, climate change
 
 1. **Clone the repository** (or download ZIP and extract):
 ```bash
-git clone https://github.com/your-repo-link/canadian-wildlife-portal.git
-cd canadian-wildlife-portal
+git clone https://github.com/dianaRiyahi/CGHPM
+cd CGHPM
 ```
 
 2. **Add Required Library**  
