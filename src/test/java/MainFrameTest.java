@@ -118,14 +118,15 @@ public class MainFrameTest {
         JFrame frame = (JFrame) method.invoke(mainFrame);
 
         SwingUtilities.invokeLater(() -> {
-            JPanel articlesScrollPane = (JPanel) frame.getContentPane().getComponent(0);
-            Component[] articlesPanel = articlesScrollPane.getComponents();
+            JPanel mainPanel = (JPanel) frame.getContentPane().getComponent(0);
+            JScrollPane scrollPane = (JScrollPane) mainPanel.getComponent(1);
+            JPanel articlesPanel = (JPanel) scrollPane.getViewport().getView();
 
             assertNotNull(articlesPanel, "articlesPanel is null");
-            assertEquals(5, articlesPanel.length, "articlesPanel does not contain 5 components");
+            assertEquals(5, articlesPanel.getComponentCount(), "articlesPanel does not contain 5 components");
 
-            JLabel firstLabel = (JLabel) articlesPanel[1];  // The JLabel inside the first animal panel
-            assertEquals("Climate Change & Wildlife", firstLabel.getText(), "First label does not contain 'Climate Change & Wildlife'");
+            JButton firstLabel = (JButton) articlesPanel.getComponent(1);  // The JLabel inside the first article panel
+            assertEquals("Endangered Species in Canada", firstLabel.getText(), "First label does not contain 'Endangered Species in Canada'");
         });
     }
 
