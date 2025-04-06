@@ -1622,24 +1622,26 @@ public class MainFrame extends JFrame {
 
     }
     private void showPrinceEdwardIslandAnimals() {
-        JFrame NunavutFrame = new JFrame("Top 5 Native Animals in Prince Edward Island");
-        NunavutFrame.setSize(800, 750);
-        NunavutFrame.setLayout(new BorderLayout());
+        JFrame PrinceEdwardIslandFrame = new JFrame("Top 5 Native Animals in Prince Edward Island");
+        PrinceEdwardIslandFrame.setSize(800, 750);
+        PrinceEdwardIslandFrame.setLayout(new BorderLayout());
 
         // Soft blue background
         Color lightBlue = new Color(230, 230, 230);
-        NunavutFrame.getContentPane().setBackground(lightBlue);
+        PrinceEdwardIslandFrame.getContentPane().setBackground(lightBlue);
 
         JPanel animalsPanel = new JPanel();
         animalsPanel.setLayout(new GridLayout(5, 1, 10, 10)); // 10px spacing for a cleaner look
         animalsPanel.setBackground(lightBlue);
 
-        String[] animals = {
-                "<html><b>Northern Shrike</b><br>The Northern Shrike is a predatory songbird known for its habit of impaling its prey on thorns or barbed wire. Found across PEI's fields and open woodlands, it hunts small mammals, birds, and insects, and is especially visible during the colder months.</html>",
-                "<html><b>Island Shrew</b><br>A small, insectivorous mammal, the Island Shrew is native to the woodlands and meadows of Prince Edward Island. Its high metabolism allows it to be active year-round, foraging for insects, worms, and other small creatures.</html>",
-                "<html><b>Great Blue Heron</b><br>A large, elegant bird often seen in PEI's coastal wetlands. Known for its long legs and distinctive blue-gray feathers, the Great Blue Heron is a skilled fisherman that feeds on fish, amphibians, and small mammals.</html>",
-                "<html><b>Eastern Box Turtle</b><br>This turtle is known for its distinct, domed shell and its ability to completely close its shell for protection. It is primarily found in the woodlands of PEI and is an important part of the island's biodiversity.</html>",
-                "<html><b>PEI Jumping Spider</b><br>A unique species of jumping spider that thrives in the grasslands and forests of Prince Edward Island. It is known for its excellent vision and acrobatic hunting abilities, often preying on insects much larger than itself.</html>"
+        String[] animals = {"Northern Shrike", "Island Shrew", "Great Blue Heron", "Eastern Box Turtle", "PEI Jumping Spider"};
+
+        String[] descriptions = {
+                "The Northern Shrike is a predatory songbird known for its habit of impaling its prey on thorns or barbed wire. Found across PEI's fields and open woodlands, it hunts small mammals, birds, and insects, and is especially visible during the colder months.",
+                "A small, insectivorous mammal, the Island Shrew is native to the woodlands and meadows of Prince Edward Island. Its high metabolism allows it to be active year-round, foraging for insects, worms, and other small creatures.",
+                "A large, elegant bird often seen in PEI's coastal wetlands. Known for its long legs and distinctive blue-gray feathers, the Great Blue Heron is a skilled fisherman that feeds on fish, amphibians, and small mammals.",
+                "This turtle is known for its distinct, domed shell and its ability to completely close its shell for protection. It is primarily found in the woodlands of PEI and is an important part of the island's biodiversity.",
+                "A unique species of jumping spider that thrives in the grasslands and forests of Prince Edward Island. It is known for its excellent vision and acrobatic hunting abilities, often preying on insects much larger than itself."
         };
 
         String[] animalImages = {
@@ -1660,23 +1662,303 @@ public class MainFrame extends JFrame {
             imageLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 15)); // Space between image & text
 
             // Name & Description Label
-            JLabel animalLabel = new JLabel(animals[i]);
+            JLabel animalLabel = new JLabel("<html><b>" + animals[i] + "</b><br>" + descriptions[i] + "</html>");
             animalLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 
             // Add components
             animalPanel.add(imageLabel, BorderLayout.WEST);
             animalPanel.add(animalLabel, BorderLayout.CENTER);
 
+            final int index = i;
+            animalPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    PrinceEdwardIslandAnimalDetails(animals[index], descriptions[index], animalImages[index]);
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    // Set the hover effect background color
+                    animalPanel.setBackground(new Color(186, 237, 235));
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    // Reset background color when mouse exits
+                    animalPanel.setBackground(lightBlue);
+                }
+            });
+
             animalsPanel.add(animalPanel);
         }
 
         JScrollPane scrollPane = new JScrollPane(animalsPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove default border
-        NunavutFrame.add(scrollPane, BorderLayout.CENTER);
-        NunavutFrame.add(animalsPanel, BorderLayout.CENTER);
+        PrinceEdwardIslandFrame.add(scrollPane, BorderLayout.CENTER);
+        PrinceEdwardIslandFrame.add(animalsPanel, BorderLayout.CENTER);
 
-        NunavutFrame.setVisible(true);
+        PrinceEdwardIslandFrame.setVisible(true);
     }
+
+    private void PrinceEdwardIslandAnimalDetails(String name, String description, String thumbnailPath) {
+        JFrame detailsFrame = new JFrame(name + " - Detailed Information");
+        detailsFrame.setSize(1200, 750);  // Wider to fit gallery on the right
+        detailsFrame.setLayout(new BorderLayout());
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        // Choose a special "main" image for each animal
+        String mainImagePath = switch (name) {
+            case "Northern Shrike" -> "src/main/resources/PrinceEdwardIsland/shrike.jpg";
+            case "Island Shrew" -> "src/main/resources/PrinceEdwardIsland/shrew.jpg";
+            case "Great Blue Heron" -> "src/main/resources/PrinceEdwardIsland/heron.jpg";
+            case "Eastern Box Turtle" -> "src/main/resources/PrinceEdwardIsland/turtle.jpg";
+            case "PEI Jumping Spider" -> "src/main/resources/PrinceEdwardIsland/spider.png";
+            default -> thumbnailPath;  // Fallback to clicked image if no special one exists
+        };
+
+        // Main Image + Description Panel
+        JPanel topPanel = new JPanel(new BorderLayout(10, 10));
+
+        ImageIcon icon = new ImageIcon(mainImagePath);
+        Image scaledImage = icon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
+        JLabel mainImageLabel = new JLabel(new ImageIcon(scaledImage));
+        topPanel.add(mainImageLabel, BorderLayout.WEST);
+
+        JTextArea descArea = new JTextArea(description);
+        descArea.setLineWrap(true);
+        descArea.setWrapStyleWord(true);
+        descArea.setEditable(false);
+        descArea.setBackground(mainPanel.getBackground());
+        descArea.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        JScrollPane descScrollPane = new JScrollPane(descArea);
+        descScrollPane.setPreferredSize(new Dimension(400, 200));
+        topPanel.add(descScrollPane, BorderLayout.CENTER);
+
+        // Facts Section
+        String facts = PrinceEdwardIslandAnimalFacts(name);
+        JTextArea factsArea = new JTextArea("\n" + facts);
+        factsArea.setLineWrap(true);
+        factsArea.setWrapStyleWord(true);
+        factsArea.setEditable(false);
+        factsArea.setBackground(mainPanel.getBackground());
+        factsArea.setFont(new Font("Arial", Font.PLAIN, 14));
+        JScrollPane factsScrollPane = new JScrollPane(factsArea);
+        factsScrollPane.setBorder(BorderFactory.createTitledBorder("Interesting Facts"));
+
+        // Population Graph
+        System.out.print(name);
+        JPanel graphPanel = PrinceEdwardIslandPopulationGraph(name);
+
+        // Right-Side Gallery Panel
+        JPanel galleryPanel = new JPanel();
+        galleryPanel.setLayout(new BoxLayout(galleryPanel, BoxLayout.Y_AXIS));
+        galleryPanel.setBorder(BorderFactory.createTitledBorder("Gallery"));
+        galleryPanel.setPreferredSize(new Dimension(250, 0));  // Fixed width
+
+        String[] additionalImages = switch (name) {
+            case "Northern Shrike" -> new String[]{
+                    "src/main/resources/PrinceEdwardIsland/shrike1.jpg",
+                    "src/main/resources/PrinceEdwardIsland/shrike2.jpg",
+                    "src/main/resources/PrinceEdwardIsland/shrike3.jpg",
+                    "src/main/resources/PrinceEdwardIsland/shrike4.jpg"
+            };
+            case "Island Shrew" -> new String[]{
+                    "src/main/resources/PrinceEdwardIsland/shrew1.jpg",
+                    "src/main/resources/PrinceEdwardIsland/shrew2.jpg",
+                    "src/main/resources/PrinceEdwardIsland/shrew3.jpg",
+                    "src/main/resources/PrinceEdwardIsland/shrew4.jpg"
+            };
+            case "Great Blue Heron" -> new String[]{
+                    "src/main/resources/PrinceEdwardIsland/heron1.jpg",
+                    "src/main/resources/PrinceEdwardIsland/heron2.jpg",
+                    "src/main/resources/PrinceEdwardIsland/heron3.jpg",
+                    "src/main/resources/PrinceEdwardIsland/heron4.jpg"
+            };
+            case "Eastern Box Turtle" -> new String[]{
+                    "src/main/resources/PrinceEdwardIsland/turtle1.jpg",
+                    "src/main/resources/PrinceEdwardIsland/turtle2.jpg",
+                    "src/main/resources/PrinceEdwardIsland/turtle3.jpg",
+                    "src/main/resources/PrinceEdwardIsland/turtle4.jpg"
+            };
+            case "PEI Jumping Spider" -> new String[]{
+                    "src/main/resources/PrinceEdwardIsland/spider1.jpg",
+                    "src/main/resources/PrinceEdwardIsland/spider2.jpg",
+                    "src/main/resources/PrinceEdwardIsland/spider3.jpg",
+                    "src/main/resources/PrinceEdwardIsland/spider4.jpg"
+            };
+            default -> new String[0];
+        };
+
+        // Add thumbnails to gallery
+        for (String imgPath : additionalImages) {
+            ImageIcon thumbIcon = new ImageIcon(imgPath);
+            Image thumbImage = thumbIcon.getImage().getScaledInstance(220, 147, Image.SCALE_SMOOTH);
+            JLabel thumbLabel = new JLabel(new ImageIcon(thumbImage));
+            thumbLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+            thumbLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            thumbLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+            thumbLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    PrinceEdwardIslandFullImage(imgPath);
+                }
+            });
+
+            galleryPanel.add(Box.createVerticalStrut(10));
+            galleryPanel.add(thumbLabel);
+        }
+
+        // Layout Assembly
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(factsScrollPane, BorderLayout.CENTER);
+        mainPanel.add(graphPanel, BorderLayout.SOUTH);
+
+        JScrollPane mainScrollPane = new JScrollPane(mainPanel);
+
+        detailsFrame.add(mainScrollPane, BorderLayout.CENTER);
+        detailsFrame.add(galleryPanel, BorderLayout.EAST);
+
+        detailsFrame.setVisible(true);
+    }
+    /**
+     * Opens a new window to display a full-sized image of the selected animal.
+     * @param imgPath The file path to the image to be displayed.
+     */
+    private void PrinceEdwardIslandFullImage(String imgPath) {
+        JFrame imageFrame = new JFrame("Full Image");
+        imageFrame.setSize(600, 600);
+        JLabel imageLabel = new JLabel(new ImageIcon(new ImageIcon(imgPath).getImage().getScaledInstance(550, 550, Image.SCALE_SMOOTH)));
+        imageFrame.add(imageLabel);
+        imageFrame.setVisible(true);
+    }
+    /**
+     * Provides a set of interesting facts about a given Nunavut animal.
+     * @param name The name of the animal.
+     * @return A string containing facts about the specified animal.
+     */
+    private String PrinceEdwardIslandAnimalFacts(String name) {
+        return switch (name) {
+            case "Northern Shrike" -> """
+            • Scientific Name: Lanius excubitor
+            • The Northern Shrike is a predatory songbird known for its habit of impaling its prey on thorns or barbed wire. Found across PEI's fields and open woodlands, it hunts small mammals, birds, and insects, and is especially visible during the colder months.
+        """;
+            case "Island Shrew" -> """
+            • Scientific Name: Sorex palustris
+            • A small, insectivorous mammal, the Island Shrew is native to the woodlands and meadows of Prince Edward Island. Its high metabolism allows it to be active year-round, foraging for insects, worms, and other small creatures.        ""\";
+        """;
+            case "Great Blue Heron" -> """
+            • Scientific Name: Ardea herodias
+            • A large, elegant bird often seen in PEI's coastal wetlands. Known for its long legs and distinctive blue-gray feathers, the Great Blue Heron is a skilled fisherman that feeds on fish, amphibians, and small mammals.
+        """;
+            case "Eastern Box Turtle" -> """
+            • Scientific Name: Terrapene carolina
+            • This turtle is known for its distinct, domed shell and its ability to completely close its shell for protection. It is primarily found in the woodlands of PEI and is an important part of the island's biodiversity.
+        """;
+            case "PEI Jumping Spider" -> """
+            • Scientific Name: Habronattus oregonensis
+            • A unique species of jumping spider that thrives in the grasslands and forests of Prince Edward Island. It is known for its excellent vision and acrobatic hunting abilities, often preying on insects much larger than itself.
+        """;
+            default -> "No facts available.";
+        };
+    }
+
+    /**
+     * Generates a JPanel containing a population graph for a given Nunavut animal.
+     * The graph displays population trends from 1980 to the present.
+     * @param animalName The name of the animal.
+     * @return JPanel containing the population graph.
+     */
+    private JPanel PrinceEdwardIslandPopulationGraph(String animalName) {
+        int[] years = {1980, 1990, 2000, 2010, 2020, 2025};
+
+        int[] populationData = switch (animalName) {
+            case "Northern Shrike" -> new int[]{26000, 25000, 24500, 23000, 22000, 21500};  // sample data
+            case "Island Shrew" -> new int[]{180000, 160000, 140000, 120000, 100000, 95000};
+            case "Great Blue Heron" -> new int[]{100000, 95000, 90000, 85000, 80000, 78000};
+            case "Eastern Box Turtle" -> new int[]{15000, 14500, 14000, 13000, 12500, 12000};
+            case "PEI Jumping Spider" -> new int[]{90000, 88000, 86000, 84000, 82000, 81000};
+            default -> new int[]{0, 0, 0, 0, 0, 0};
+        };
+
+        JPanel graphPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+
+                int width = getWidth();
+                int height = getHeight();
+
+                g2.setColor(Color.WHITE);
+                g2.fillRect(0, 0, width, height);
+
+                // Draw axes
+                g2.setColor(Color.BLACK);
+                g2.drawLine(50, height - 50, width - 50, height - 50); // X-axis
+                g2.drawLine(50, height - 50, 50, 50); // Y-axis
+
+                // Plot data points
+                int graphHeight = height - 100;
+                int graphWidth = width - 100;
+                int xStep = graphWidth / (years.length - 1);
+
+                int maxPopulation = 0;
+                for (int pop : populationData) {
+                    if (pop > maxPopulation) maxPopulation = pop;
+                }
+
+                int prevX = 50, prevY = height - 50 - (populationData[0] * graphHeight / maxPopulation);
+
+                g2.setColor(Color.BLUE);
+                for (int i = 0; i < years.length; i++) {
+                    int x = 50 + (i * xStep);
+                    int y = height - 50 - (populationData[i] * graphHeight / maxPopulation);
+
+                    g2.fillOval(x - 3, y - 3, 6, 6);
+
+                    if (i > 0) {
+                        g2.drawLine(prevX, prevY, x, y);
+                    }
+
+                    prevX = x;
+                    prevY = y;
+
+                    // Add year labels
+                    g2.setColor(Color.BLACK);
+                    g2.drawString(String.valueOf(years[i]), x - 15, height - 30);
+                }
+
+                // Y-axis labels (population)
+                for (int i = 0; i <= 5; i++) {
+                    int yLabel = maxPopulation * i / 5;
+                    int yPos = height - 50 - (yLabel * graphHeight / maxPopulation);
+                    g2.drawString(yLabel + "", 10, yPos + 5);
+                }
+            }
+        };
+
+        graphPanel.setPreferredSize(new Dimension(600, 200));
+        graphPanel.setBorder(BorderFactory.createTitledBorder("Population Growth in Canada (1980-Present)"));
+
+        return graphPanel;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     private void showNewfoundlandandLabradorAnimals() {
         JFrame NewfoundlandFrame = new JFrame("Top 5 Native Animals in Newfoundland and Labrador");
         NewfoundlandFrame.setSize(800, 750);
@@ -1693,11 +1975,11 @@ public class MainFrame extends JFrame {
         String[] animals = {"Labrador Retriever", "Northern Fur Seal", "Pine Marten", "Carribean Sea Star", "Minke Whale"};
 
         String[] descriptions = {
-                "<html><b>Labrador Retriever</b><br>Famed worldwide, the Labrador Retriever is a breed of dog originating from the region. It was initially bred for retrieving fish and game, known for its intelligence and friendly demeanor.</html>",
-                "<html><b>Northern Fur Seal</b><br>This species is found in the waters off Newfoundland and Labrador. Northern Fur Seals are known for their thick fur and agility in the water, where they hunt fish and squid.</html>",
-                "<html><b>Pine Marten</b><br>A small, carnivorous mammal found in the forests of Newfoundland and Labrador. It is elusive, with a dark brown fur coat, and preys on small mammals, birds, and insects.</html>",
-                "<html><b>Caribbean Sea Star</b><br>Found in the coastal waters of Newfoundland and Labrador, the Caribbean Sea Star is a brightly colored starfish. While its name suggests warmer waters, it's found in colder regions during specific migratory patterns.</html>",
-                "<html><b>Minke Whale</b><br>One of the smaller baleen whales, the Minke Whale can be spotted off the coast of Newfoundland and Labrador. It is known for its distinctive black-and-white coloration and is often seen feeding in the region's rich waters.</html>"
+                "Famed worldwide, the Labrador Retriever is a breed of dog originating from the region. It was initially bred for retrieving fish and game, known for its intelligence and friendly demeanor.",
+                "This species is found in the waters off Newfoundland and Labrador. Northern Fur Seals are known for their thick fur and agility in the water, where they hunt fish and squid.",
+                "A small, carnivorous mammal found in the forests of Newfoundland and Labrador. It is elusive, with a dark brown fur coat, and preys on small mammals, birds, and insects.",
+                "Found in the coastal waters of Newfoundland and Labrador, the Caribbean Sea Star is a brightly colored starfish. While its name suggests warmer waters, it's found in colder regions during specific migratory patterns.",
+                "One of the smaller baleen whales, the Minke Whale can be spotted off the coast of Newfoundland and Labrador. It is known for its distinctive black-and-white coloration and is often seen feeding in the region's rich waters."
         };
 
         String[] animalImages = {
