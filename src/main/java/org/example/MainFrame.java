@@ -882,7 +882,7 @@ public class MainFrame extends JFrame {
 
         return animalNames;
     }
-    private void displaySearchResults(String searchQuery) {
+    private List<String> displaySearchResults(String searchQuery) {
         // Clear the existing content in the right sidebar
         rightSidebar.removeAll();
         rightSidebar.revalidate();
@@ -936,6 +936,7 @@ public class MainFrame extends JFrame {
         rightSidebar.revalidate();
         rightSidebar.repaint();
 
+        return results;
     }
 
     private void handleSearchResultSelection(String selectedItem) {
@@ -1689,7 +1690,9 @@ public class MainFrame extends JFrame {
         animalsPanel.setLayout(new GridLayout(5, 1, 10, 10)); // 10px spacing for a cleaner look
         animalsPanel.setBackground(lightBlue);
 
-        String[] animals = {
+        String[] animals = {"Labrador Retriever", "Northern Fur Seal", "Pine Marten", "Carribean Sea Star", "Minke Whale"};
+
+        String[] descriptions = {
                 "<html><b>Labrador Retriever</b><br>Famed worldwide, the Labrador Retriever is a breed of dog originating from the region. It was initially bred for retrieving fish and game, known for its intelligence and friendly demeanor.</html>",
                 "<html><b>Northern Fur Seal</b><br>This species is found in the waters off Newfoundland and Labrador. Northern Fur Seals are known for their thick fur and agility in the water, where they hunt fish and squid.</html>",
                 "<html><b>Pine Marten</b><br>A small, carnivorous mammal found in the forests of Newfoundland and Labrador. It is elusive, with a dark brown fur coat, and preys on small mammals, birds, and insects.</html>",
@@ -1707,33 +1710,323 @@ public class MainFrame extends JFrame {
 
         for (int i = 0; i < animals.length; i++) {
             JPanel animalPanel = new JPanel(new BorderLayout());
-            animalPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Padding
+            animalPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-            // Image Label
+            // Set the background color for each animal panel explicitly
+            animalPanel.setBackground(lightBlue);
+
             ImageIcon icon = new ImageIcon(animalImages[i]);
             JLabel imageLabel = new JLabel(icon);
-            imageLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 15)); // Space between image & text
+            imageLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 15));
 
-            // Name & Description Label
-            JLabel animalLabel = new JLabel(animals[i]);
+            JLabel animalLabel = new JLabel("<html><b>" + animals[i] + "</b><br>" + descriptions[i] + "</html>");
             animalLabel.setFont(new Font("Arial", Font.PLAIN, 14));
 
-            // Add components
             animalPanel.add(imageLabel, BorderLayout.WEST);
             animalPanel.add(animalLabel, BorderLayout.CENTER);
 
+            final int index = i;
+            animalPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    NewfoundlandandLabradorAnimalDetails(animals[index], descriptions[index], animalImages[index]);
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    // Set the hover effect background color
+                    animalPanel.setBackground(new Color(186, 237, 235));
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    // Reset background color when mouse exits
+                    animalPanel.setBackground(lightBlue);
+                }
+            });
 
             animalsPanel.add(animalPanel);
         }
 
         JScrollPane scrollPane = new JScrollPane(animalsPanel);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove default border
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
         NewfoundlandFrame.add(scrollPane, BorderLayout.CENTER);
         NewfoundlandFrame.add(animalsPanel, BorderLayout.CENTER);
 
-
+        NewfoundlandFrame.setLocationRelativeTo(null);
         NewfoundlandFrame.setVisible(true);
     }
+
+    private void NewfoundlandandLabradorAnimalDetails(String name, String description, String thumbnailPath) {
+        JFrame detailsFrame = new JFrame(name + " - Detailed Information");
+        detailsFrame.setSize(1200, 750);  // Wider to fit gallery on the right
+        detailsFrame.setLayout(new BorderLayout());
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        // Choose a special "main" image for each animal
+        String mainImagePath = switch (name) {
+            case "Dog" -> "src/main/resources/NewfoundlandandLabrador/dog.jpg";
+            case "Marten" -> "src/main/resources/NewfoundlandandLabrador/marten.jpg";
+            case "Seal" -> "src/main/resources/NewfoundlandandLabrador/seal.jpg";
+            case "Star" -> "src/main/resources/NewfoundlandandLabrador/star.jpg";
+            case "Whale" -> "src/main/resources/NewfoundlandandLabrador/whale.png";
+            default -> thumbnailPath;  // Fallback to clicked image if no special one exists
+        };
+
+        // Main Image + Description Panel
+        JPanel topPanel = new JPanel(new BorderLayout(10, 10));
+
+        ImageIcon icon = new ImageIcon(mainImagePath);
+        Image scaledImage = icon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
+        JLabel mainImageLabel = new JLabel(new ImageIcon(scaledImage));
+        topPanel.add(mainImageLabel, BorderLayout.WEST);
+
+        JTextArea descArea = new JTextArea(description);
+        descArea.setLineWrap(true);
+        descArea.setWrapStyleWord(true);
+        descArea.setEditable(false);
+        descArea.setBackground(mainPanel.getBackground());
+        descArea.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        JScrollPane descScrollPane = new JScrollPane(descArea);
+        descScrollPane.setPreferredSize(new Dimension(400, 200));
+        topPanel.add(descScrollPane, BorderLayout.CENTER);
+
+        // Facts Section
+        String facts = NewfoundlandandLabradorAnimalFacts(name);
+        JTextArea factsArea = new JTextArea("\n" + facts);
+        factsArea.setLineWrap(true);
+        factsArea.setWrapStyleWord(true);
+        factsArea.setEditable(false);
+        factsArea.setBackground(mainPanel.getBackground());
+        factsArea.setFont(new Font("Arial", Font.PLAIN, 14));
+        JScrollPane factsScrollPane = new JScrollPane(factsArea);
+        factsScrollPane.setBorder(BorderFactory.createTitledBorder("Interesting Facts"));
+
+        // Population Graph
+        JPanel graphPanel = NewfoundlandandLabradorPopulationGraph(name);
+
+        // Right-Side Gallery Panel
+        JPanel galleryPanel = new JPanel();
+        galleryPanel.setLayout(new BoxLayout(galleryPanel, BoxLayout.Y_AXIS));
+        galleryPanel.setBorder(BorderFactory.createTitledBorder("Gallery"));
+        galleryPanel.setPreferredSize(new Dimension(250, 0));  // Fixed width
+
+        String[] additionalImages = switch (name) {
+            case "Labrador Retriever" -> new String[]{
+                    "src/main/resources/NewfoundlandandLabrador/dog1.jpg",
+                    "src/main/resources/NewfoundlandandLabrador/dog2.png",
+                    "src/main/resources/NewfoundlandandLabrador/dog3.jpg",
+                    "src/main/resources/NewfoundlandandLabrador/dog4.jpg"
+            };
+            case "Pine Marten" -> new String[]{
+                    "src/main/resources/NewfoundlandandLabrador/marten1.jpg",
+                    "src/main/resources/NewfoundlandandLabrador/marten2.jpg",
+                    "src/main/resources/NewfoundlandandLabrador/marten3.jpg",
+                    "src/main/resources/NewfoundlandandLabrador/marten4.jpg"
+            };
+            case "Northern Fur Seal" -> new String[]{
+                    "src/main/resources/NewfoundlandandLabrador/seal1.jpg",
+                    "src/main/resources/NewfoundlandandLabrador/seal2.jpg",
+                    "src/main/resources/NewfoundlandandLabrador/seal3.jpg",
+                    "src/main/resources/NewfoundlandandLabrador/seal4.jpg"
+            };
+            case "Carribean Sea Star" -> new String[]{
+                    "src/main/resources/NewfoundlandandLabrador/star1.jpg",
+                    "src/main/resources/NewfoundlandandLabrador/star2.jpg",
+                    "src/main/resources/NewfoundlandandLabrador/star3.jpg",
+                    "src/main/resources/NewfoundlandandLabrador/star4.jpg"
+            };
+            case "Minke Whale" -> new String[]{
+                    "src/main/resources/NewfoundlandandLabrador/whale1.jpg",
+                    "src/main/resources/NewfoundlandandLabrador/whale2.jpeg",
+                    "src/main/resources/NewfoundlandandLabrador/whale3.jpg",
+                    "src/main/resources/NewfoundlandandLabrador/whale4.jpg"
+            };
+            default -> new String[0];
+        };
+
+        // Add thumbnails to gallery
+        for (String imgPath : additionalImages) {
+            ImageIcon thumbIcon = new ImageIcon(imgPath);
+            System.out.print(imgPath);
+            Image thumbImage = thumbIcon.getImage().getScaledInstance(220, 147, Image.SCALE_SMOOTH);
+            JLabel thumbLabel = new JLabel(new ImageIcon(thumbImage));
+            thumbLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+            thumbLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            thumbLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+            thumbLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    NewfoundlandandLabradorFullImage(imgPath);
+                }
+            });
+
+            galleryPanel.add(Box.createVerticalStrut(10));
+            galleryPanel.add(thumbLabel);
+        }
+
+        // Layout Assembly
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(factsScrollPane, BorderLayout.CENTER);
+        mainPanel.add(graphPanel, BorderLayout.SOUTH);
+
+        JScrollPane mainScrollPane = new JScrollPane(mainPanel);
+
+        detailsFrame.add(mainScrollPane, BorderLayout.CENTER);
+        detailsFrame.add(galleryPanel, BorderLayout.EAST);
+
+        detailsFrame.setVisible(true);
+    }
+    /**
+     * Opens a new window to display a full-sized image of the selected animal.
+     * @param imgPath The file path to the image to be displayed.
+     */
+    private void NewfoundlandandLabradorFullImage(String imgPath) {
+        JFrame imageFrame = new JFrame("Full Image");
+        imageFrame.setSize(600, 600);
+        JLabel imageLabel = new JLabel(new ImageIcon(new ImageIcon(imgPath).getImage().getScaledInstance(550, 550, Image.SCALE_SMOOTH)));
+        imageFrame.add(imageLabel);
+        imageFrame.setVisible(true);
+    }
+    /**
+     * Provides a set of interesting facts about a given Nunavut animal.
+     * @param name The name of the animal.
+     * @return A string containing facts about the specified animal.
+     */
+    private String NewfoundlandandLabradorAnimalFacts(String name) {
+        return switch (name) {
+            case "Labrador Retriever" -> """
+            • Scientific Name: Canis Lupus Familiaris
+            • Famed worldwide, the Labrador Retriever is a breed of dog originating from the region. It was initially bred for retrieving fish and game, known for its intelligence and friendly demeanor.
+        """;
+            case "Northern Fur Seal" -> """
+            • Scientific Name: Callorhinus ursinus
+            • This species is found in the waters off Newfoundland and Labrador. Northern Fur Seals are known for their thick fur and agility in the water, where they hunt fish and squid.
+        """;
+            case "Pine Marten" -> """
+            • Scientific Name: Martes martes
+            • A small, carnivorous mammal found in the forests of Newfoundland and Labrador. It is elusive, with a dark brown fur coat, and preys on small mammals, birds, and insects.
+        """;
+            case "Caribbean Sea Star" -> """
+            • Scientific Name: Oreaster reticulatus
+            • Found in the coastal waters of Newfoundland and Labrador, the Caribbean Sea Star is a brightly colored starfish. While its name suggests warmer waters, it's found in colder regions during specific migratory patterns.
+        """;
+            case "Minke Whale" -> """
+            • Scientific Name: Delphinapterus leucas
+            • One of the smaller baleen whales, the Minke Whale can be spotted off the coast of Newfoundland and Labrador. It is known for its distinctive black-and-white coloration and is often seen feeding in the region's rich waters.
+        """;
+            default -> "No facts available.";
+        };
+    }
+
+    /**
+     * Generates a JPanel containing a population graph for a given Nunavut animal.
+     * The graph displays population trends from 1980 to the present.
+     * @param animalName The name of the animal.
+     * @return JPanel containing the population graph.
+     */
+    private JPanel NewfoundlandandLabradorPopulationGraph(String animalName) {
+        int[] years = {1980, 1990, 2000, 2010, 2020, 2025};
+
+        int[] populationData = switch (animalName) {
+            case "Labrador Retriever" -> new int[]{26000, 25000, 24500, 23000, 22000, 21500};  // sample data
+            case "Northern Fur Seal" -> new int[]{180000, 160000, 140000, 120000, 100000, 95000};
+            case "Pine Marten" -> new int[]{100000, 95000, 90000, 85000, 80000, 78000};
+            case "Carribean Sea Star" -> new int[]{15000, 14500, 14000, 13000, 12500, 12000};
+            case "Minke Whale" -> new int[]{90000, 88000, 86000, 84000, 82000, 81000};
+            default -> new int[]{0, 0, 0, 0, 0, 0};
+        };
+
+        JPanel graphPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+
+                int width = getWidth();
+                int height = getHeight();
+
+                g2.setColor(Color.WHITE);
+                g2.fillRect(0, 0, width, height);
+
+                // Draw axes
+                g2.setColor(Color.BLACK);
+                g2.drawLine(50, height - 50, width - 50, height - 50); // X-axis
+                g2.drawLine(50, height - 50, 50, 50); // Y-axis
+
+                // Plot data points
+                int graphHeight = height - 100;
+                int graphWidth = width - 100;
+                int xStep = graphWidth / (years.length - 1);
+
+                int maxPopulation = 0;
+                for (int pop : populationData) {
+                    if (pop > maxPopulation) maxPopulation = pop;
+                }
+
+                int prevX = 50, prevY = height - 50 - (populationData[0] * graphHeight / maxPopulation);
+
+                g2.setColor(Color.BLUE);
+                for (int i = 0; i < years.length; i++) {
+                    int x = 50 + (i * xStep);
+                    int y = height - 50 - (populationData[i] * graphHeight / maxPopulation);
+
+                    g2.fillOval(x - 3, y - 3, 6, 6);
+
+                    if (i > 0) {
+                        g2.drawLine(prevX, prevY, x, y);
+                    }
+
+                    prevX = x;
+                    prevY = y;
+
+                    // Add year labels
+                    g2.setColor(Color.BLACK);
+                    g2.drawString(String.valueOf(years[i]), x - 15, height - 30);
+                }
+
+                // Y-axis labels (population)
+                for (int i = 0; i <= 5; i++) {
+                    int yLabel = maxPopulation * i / 5;
+                    int yPos = height - 50 - (yLabel * graphHeight / maxPopulation);
+                    g2.drawString(yLabel + "", 10, yPos + 5);
+                }
+            }
+        };
+
+        graphPanel.setPreferredSize(new Dimension(600, 200));
+        graphPanel.setBorder(BorderFactory.createTitledBorder("Population Growth in Canada (1980-Present)"));
+
+        return graphPanel;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Displays a window showcasing the top 5 native animals in Nunavut.
      * Each animal is shown with an image, a short description, and a hover effect.
