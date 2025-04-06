@@ -11,7 +11,7 @@ Assignment completed for Software Design and Analysis for the Winter 2025 semest
 ## Description  
 In this final course assignment, our team developed the **Canadian Wildlife Portal**, an interactive Java-based desktop application that educates users about Canadian wildlife while promoting conservation efforts. The application allows users to explore an interactive map of Canada, select provinces, and view detailed species information including images, population data, and fun facts. Users can also access emergency contacts, learn about hunting regulations, and read wildlife-related articles.
 
-Currently, animal data is fully available for the **Nunavut** region, while other provinces are under development.
+Currently, animal data is fully available for the **Nunavut, PEI, and Newfoundland & Labrador**region, while other provinces are under development.
 
 ---
 
