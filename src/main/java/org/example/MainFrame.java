@@ -1842,7 +1842,7 @@ public class MainFrame extends JFrame {
             };
             case "Minke Whale" -> new String[]{
                     "src/main/resources/NewfoundlandandLabrador/whale1.jpg",
-                    "src/main/resources/NewfoundlandandLabrador/whale2.jpeg",
+                    "src/main/resources/NewfoundlandandLabrador/whale2.jpg",
                     "src/main/resources/NewfoundlandandLabrador/whale3.jpg",
                     "src/main/resources/NewfoundlandandLabrador/whale4.jpg"
             };
@@ -1852,7 +1852,6 @@ public class MainFrame extends JFrame {
         // Add thumbnails to gallery
         for (String imgPath : additionalImages) {
             ImageIcon thumbIcon = new ImageIcon(imgPath);
-            System.out.print(imgPath);
             Image thumbImage = thumbIcon.getImage().getScaledInstance(220, 147, Image.SCALE_SMOOTH);
             JLabel thumbLabel = new JLabel(new ImageIcon(thumbImage));
             thumbLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
