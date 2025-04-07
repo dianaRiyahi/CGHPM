@@ -50,7 +50,15 @@
     </properties>
 
     <build>
-    <plugins>
+        <finalName>Animal_Database</finalName>
+            <resources>
+                <resource>
+                    <directory>src/main/resources</directory>
+                </resource>
+            </resources>
+
+
+        <plugins>
         <!-- This plugin creates an executable JAR -->
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -59,12 +67,14 @@
             <configuration>
                 <archive>
                     <manifest>
-                        <mainClass>com.example.MainFrame</mainClass>  <!-- Your main class -->
+                        <mainClass>org.example.MainFrame</mainClass>
                     </manifest>
                 </archive>
             </configuration>
         </plugin>
     </plugins>
     </build>
+
+
 
 </project>

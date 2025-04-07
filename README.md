@@ -20,35 +20,35 @@ The screenshots below will help describe the interface and main functionalities 
 
 #### Figure 1  
 Landing page of the application. From here, users can log in, sign up, or view the map to begin their exploration.  
-![Figure 1](MAIN.png)
+![Figure 1](src/main/resources/MAIN.png)
 
 #### Figure 2  
 Interactive map of Canada where users can click green flags to view animals in that province.  
-![Figure 2](MAP.png)
+![Figure 2](src/main/resources/MAP.png)
 
 #### Figure 3  
 Displays the top 5 native animals in Nunavut. Each entry contains an image and a brief description.  
-![Figure 3](TOPNATIVEANIMALS.png)
+![Figure 3](src/main/resources/TOPNATIVEANIMALS.png)
 
 #### Figure 4  
 Detailed animal profile view for the polar bear. Includes a description, gallery, scientific facts, and a population growth chart.  
-![Figure 4](DETAILEDANIMALINFO.png)
+![Figure 4](src/main/resources/DETAILEDANIMALINFO.png)
 
 #### Figure 5  
 Displays emergency contact information for wildlife-related issues.  
-![Figure 5](EMERGENCYCONTACT.png)
+![Figure 5](src/main/resources/EMERGENCYCONTACT.png)
 
 #### Figure 6  
 Table showing restricted hunting periods and quantity limits for select Canadian species.  
-![Figure 6](HUNTINGLIMITS.png)
+![Figure 6](src/main/resources/HUNTINGLIMITS.png)
 
 #### Figure 7  
 Animal facts window showcasing interesting species commonly found in Canada.  
-![Figure 7](ANIMALFACTS.png)
+![Figure 7](src/main/resources/ANIMALFACTS.png)
 
 #### Figure 8  
 Curated wildlife articles addressing topics such as conservation, climate change, and endangered species.  
-![Figure 8](ARTICLES.png)
+![Figure 8](src/main/resources/ARTICLES.png)
 
 ---
 
