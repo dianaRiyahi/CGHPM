@@ -70,15 +70,18 @@ cd CGHPM
 2. **Add Required Library**  
    Ensure OpenCSV is added to the classpath. If using IntelliJ:
    - Go to *File > Project Structure > Libraries*
-   - Click `+` and add the `opencsv-x.x.jar`
+   - Click `+` and add the `Animal_Database.jar`
 
 3. **Run the Application**
    - Open `MainFrame.java` in your IDE
    - Right-click the file and choose `Run MainFrame.main()`  
+   
+   OR In the `target` folder, double-click on the `Animal_Database.jar` file.
+   
    OR use terminal:
 ```bash
-javac -cp "lib/opencsv-x.x.jar" -d out src/main/java/org/example/*.java
-java -cp "out:lib/opencsv-x.x.jar" org.example.MainFrame
+javac -cp "targer/Animal_Database.jar" -d out src/main/java/org/example/*.java
+java -cp "out:target/Animal_Database.jar" org.example.MainFrame
 ```
 
 ---
